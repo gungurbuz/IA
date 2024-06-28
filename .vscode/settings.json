@@ -1,0 +1,23 @@
+{
+    "java.project.sourcePaths": ["src"],
+    "java.project.outputPath": "bin",
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar"
+    ],
+    "sqltools.connections": [
+        {
+            "mysqlOptions": {
+                "authProtocol": "default",
+                "enableSsl": "Disabled"
+            },
+            "previewLimit": 50,
+            "server": "192.168.1.102",
+            "port": 3306,
+            "driver": "MySQL",
+            "name": "testserver",
+            "database": "mydb",
+            "username": "root",
+            "askForPassword": true
+        }
+    ]
+}
