@@ -1,18 +1,24 @@
 import java.sql.*;
+import java.util.Scanner;
+
 
 public class Helper {
 
-    public void init(){
-        try {
-        Class.forName("com.mysql.cj.jdbc.Driver");
-        Connection con = DriverManager.getConnection("jdbc:mysql://192.168.1.102:3306/mydb", "root", "1234");
-        } catch (Exception e) {
+    Scanner s = new Scanner(System.in);
+    
+    public void login(Connection con, String username, String passString){
+        System.out.println("Enter Email:");
+        String email = s.nextLine();
+        System.out.println("Enter Password:");
+        String plainpass = s.nextLine();
+        String passhash = Password.makePass(plainpass);
+        try{
+        Statement loginstmt = con.createStatement();
+        ResultSet loginrs = loginstmt.executeQuery("select passhash from member where email = " + email + ";");
+        }
+        catch (Exception e){
             System.out.println(e);
         }
-    }
-    
-    public String login(String username, String passString){
-        
     }
     
 // try {

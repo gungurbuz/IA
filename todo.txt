@@ -1,0 +1,1 @@
+add passhash to member table (not null)
