@@ -15,6 +15,9 @@ public class Helper {
         try{
         Statement loginstmt = con.createStatement();
         ResultSet loginrs = loginstmt.executeQuery("select passhash from member where email = " + email + ";");
+        //if (loginrs.getString("passhash").equals(passhash)){
+        //
+        //}
         }
         catch (Exception e){
             System.out.println(e);
