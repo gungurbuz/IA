@@ -13,7 +13,7 @@ public class Helper {
         String plainpass = s.nextLine();
         String passhash = Password.makePass(plainpass);
         try {
-            PreparedStatement loginstmt = con.prepareStatement("SELECT password FROM users WHERE username = ?;");
+            PreparedStatement loginstmt = con.prepareStatement("SELECT password FROM member WHERE username = ?;");
             loginstmt.setString(1, uname);
             ResultSet loginrs = loginstmt.executeQuery();
             if (loginrs.next()) {
