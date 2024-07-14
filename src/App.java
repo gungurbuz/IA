@@ -10,7 +10,22 @@ class App {
         } catch (Exception e) {
             System.out.println(e);
         }
-        Helper.signup(con, "test", "test");
-        Helper.login(con, "test", "test");
+
+        // Testing purposes only
+        // Helper.signup(con, "test", "test");
+        // Helper.login(con, "test", "test");
+
+        java.util.Scanner scanner = new java.util.Scanner(System.in);
+        System.out.println("Select an option: 1. Signup 2. Login");
+        int choice = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
+
+        if (choice == 1) {
+            Helper.signup(con, "", ""); // Signup (username and password will be prompted)
+        } else if (choice == 2) {
+            Helper.login(con, "", ""); // Login (username and password will be prompted)
+        }
+
+        scanner.close();
     }
 }
