@@ -4,20 +4,22 @@ import java.util.Scanner;
 public class Helper {
 
     static Scanner s = new Scanner(System.in);
+    private static String currentUsername;
 
-    public static void login(Connection con, String username, String passString) {
-        System.out.println("Enter Username:"); // all println's to be moved to App, only here for testing purposes
+    public static boolean login(Connection con) {
+        System.out.println("Enter Username:");
         String uname = s.nextLine();
         System.out.println("Enter Password:");
         String plainpass = s.nextLine();
         String passhash = Password.makePass(plainpass);
         try {
-            PreparedStatement loginstmt = con.prepareStatement("SELECT password FROM member WHERE username = ?;");
+            PreparedStatement loginstmt = con.prepareStatement("SELECT password FROM users WHERE username = ?;");
             loginstmt.setString(1, uname);
             ResultSet loginrs = loginstmt.executeQuery();
             if (loginrs.next()) {
                 if (loginrs.getString("password").equals(passhash)) {
-                    System.out.println("Login successful.");
+                    currentUsername = uname;
+                    return true;
                 } else {
                     System.out.println("Invalid username or password.");
                 }
@@ -27,9 +29,10 @@ public class Helper {
         } catch (Exception e) {
             System.out.println(e);
         }
+        return false;
     }
 
-    public static void signup(Connection con, String username, String newPass) {
+    public static void signup(Connection con) {
         System.out.println("Enter Username:"); // same as login
         String uname = s.nextLine();
         System.out.println("Enter First Name:");
@@ -61,5 +64,10 @@ public class Helper {
         } catch (Exception e) {
             System.out.println(e);
         }
+        
+    }
+
+    public static String getUsername() {
+        return currentUsername;
     }
 }
