@@ -1,24 +1,32 @@
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
+import java.io.Console;
 
 public class Helper {
 
     static Scanner s = new Scanner(System.in);
+    static Console cons = System.console();
     private static String currentUsername;
 
     public static boolean login(Connection con) {
         System.out.println("Enter Username:");
         String uname = s.nextLine();
         System.out.println("Enter Password:");
-        String plainpass = s.nextLine();
+        String plainpass = readPasswordtoString();
         String passhash = Password.makePass(plainpass);
         try {
-            PreparedStatement loginstmt = con.prepareStatement("SELECT password FROM member WHERE username = ?;");
+            PreparedStatement loginstmt = con.prepareStatement("SELECT passhash FROM member WHERE uname = ?;");
             loginstmt.setString(1, uname);
             ResultSet loginrs = loginstmt.executeQuery();
             if (loginrs.next()) {
-                if (loginrs.getString("password").equals(passhash)) {
+                if (loginrs.getString("passhash").equals(passhash)) {
                     currentUsername = uname;
+                    writeLoginTime(con);
                     return true;
                 } else {
                     System.out.println("Invalid username or password.");
@@ -32,6 +40,35 @@ public class Helper {
         return false;
     }
 
+    private static void writeLoginTime(Connection con) {
+        try {
+            PreparedStatement loginstampstmt = con.prepareStatement(
+                    "UPDATE member SET lastlogin = ? WHERE uname = ?");
+            loginstampstmt.setString(1, timeStamp());
+            loginstampstmt.setString(2, currentUsername);
+            loginstampstmt.executeUpdate();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+
+    public static void readLastLogin(Connection con, String uname) {
+        try {
+            PreparedStatement loginreadstmt = con.prepareStatement("SELECT lastlogin FROM member WHERE uname = ?;");
+            loginreadstmt.setString(1, uname);
+            ResultSet loginreadrs = loginreadstmt.executeQuery();
+            if (loginreadrs.next()){
+                System.out.println("Last seen: " + (loginreadrs.getString("lastlogin")));
+            }
+            else{
+                System.out.println("First login, welcome!");
+            }
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+
     public static void signup(Connection con) {
         System.out.println("Enter Username:"); // same as login
         String uname = s.nextLine();
@@ -43,9 +80,9 @@ public class Helper {
         String plainpass;
         do {
             System.out.println("Enter Password:");
-            plainpass = s.nextLine();
+            plainpass = readPasswordtoString();
             System.out.println("Reenter Password:");
-            if (s.nextLine().equals(plainpass)) {
+            if (readPasswordtoString().equals(plainpass)) {
                 passMatch = true;
             } else {
                 System.out.println("Passwords do not match!");
@@ -64,10 +101,19 @@ public class Helper {
         } catch (Exception e) {
             System.out.println(e);
         }
-        
+
     }
 
     public static String getUsername() {
         return currentUsername;
+    }
+
+    public static String timeStamp() {
+        return ZonedDateTime.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("uuuu.MM.dd.HH.mm.ss"));
+    }
+
+    private static String readPasswordtoString(){
+        char[] passchars = cons.readPassword();
+        return new String(passchars);
     }
 }

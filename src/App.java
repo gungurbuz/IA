@@ -34,6 +34,8 @@ class App {
                             if (isAuthenticated) {
                                 System.out.println("Login successful.");
                                 username = Helper.getUsername();
+                                System.out.println("Welcome " + username);
+                                Helper.readLastLogin(con, username);
                             }
                             break;
                         case 3:
