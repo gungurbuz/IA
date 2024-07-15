@@ -24,7 +24,7 @@ This repository contains the code for my Computer Science Internal Assessment, w
 ## Installation
 
 1. Clone the repository:
-    ```sh
+    ```
     git clone https://github.com/gungurbuz/IA.git
     cd IA
     ```
@@ -35,8 +35,10 @@ This repository contains the code for my Computer Science Internal Assessment, w
 ## Usage 
 
 1. Compile the Java files:
-```javac App.java Helper.java Password.java
+```
+javac App.java Helper.java Password.java
 ```
 2. Run the application:
-```java App
+```
+java App
 ```
