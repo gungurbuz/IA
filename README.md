@@ -1,10 +1,17 @@
+
 # To-Do List
 
-- [ ] Database Connection
+- [x] Database Connection
 - [ ] User Accounts
-- [ ] Account Authentication/Switching
-- [ ] Password Hashing
-- [ ] Command Line Input Masking
-- [ ] Account Limited Access
-- [ ] Library Transactions
+    - [x] Account Authentication
+    - [x] Account Switching
+    - [x] Password Hashing
+    - [ ] Changing User Info/Password
+- [x] Command Line Input Masking
+- [ ] Library Functionality
     - [ ] Searching
+        - [ ] Partial Searches
+        - [ ] Autocorrect
+    - [ ] Loaning/Returning
+        - [ ] Loan Status Tracking
+        - [ ] Overdue Reminders
