@@ -57,10 +57,9 @@ public class Helper {
             PreparedStatement loginreadstmt = con.prepareStatement("SELECT lastlogin FROM member WHERE uname = ?;");
             loginreadstmt.setString(1, uname);
             ResultSet loginreadrs = loginreadstmt.executeQuery();
-            if (loginreadrs.next()){
+            if (loginreadrs.next()) {
                 System.out.println("Last seen: " + (loginreadrs.getString("lastlogin")));
-            }
-            else{
+            } else {
                 System.out.println("First login, welcome!");
             }
 
@@ -98,6 +97,8 @@ public class Helper {
             signupstmt.setString(4, passHash);
             signupstmt.executeUpdate();
             System.out.println("Signup complete, proceed to login.");
+            wait(500);
+            clearConsole();
         } catch (Exception e) {
             System.out.println(e);
         }
@@ -112,8 +113,22 @@ public class Helper {
         return ZonedDateTime.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("uuuu.MM.dd.HH.mm.ss"));
     }
 
-    private static String readPasswordtoString(){
+    private static String readPasswordtoString() {
         char[] passchars = cons.readPassword();
         return new String(passchars);
     }
+
+    public static void clearConsole() {
+        System.out.print("\033[H\033[2J");
+        Helper.cons.flush();
+    }
+
+    public static void wait(int ms) {
+        try {
+            Thread.sleep(ms);
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
 }

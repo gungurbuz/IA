@@ -21,7 +21,7 @@ class App {
         while (isRunning) {
             try {
                 if (!isAuthenticated) {
-                    System.out.println("Select an option: 1. Signup 2. Login 3. Exit");
+                    System.out.println("Select an option: 1. Signup 2. Login 3. Test 4. Exit");
                     int choice = scanner.nextInt();
                     scanner.nextLine(); // Consume newline
 
@@ -33,16 +33,23 @@ class App {
                             isAuthenticated = Helper.login(con);
                             if (isAuthenticated) {
                                 System.out.println("Login successful.");
+                                Helper.wait(100);
+                                Helper.clearConsole();
                                 username = Helper.getUsername();
                                 System.out.println("Welcome " + username);
                                 Helper.readLastLogin(con, username);
                             }
                             break;
                         case 3:
+                            System.out.println("nothing here");
+                            break;
+                        case 4:
                             isRunning = false;
                             break;
                         default:
                             System.out.println("Invalid choice. Please try again.");
+                            Helper.wait(500);
+                            Helper.clearConsole();
                     }
                 } else {
                     System.out.println("Select an option: 1. Logout 2. Exit");
@@ -53,6 +60,8 @@ class App {
                         case 1:
                             isAuthenticated = false;
                             System.out.println("Logged out successfully.");
+                            Helper.wait(500);
+                            Helper.clearConsole();
                             break;
                         case 2:
                             isRunning = false;
