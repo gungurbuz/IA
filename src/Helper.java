@@ -26,7 +26,6 @@ public class Helper {
             if (loginrs.next()) {
                 if (loginrs.getString("passhash").equals(passhash)) {
                     currentUsername = uname;
-                    writeLoginTime(con);
                     return true;
                 } else {
                     System.out.println("Invalid username or password.");
@@ -57,10 +56,12 @@ public class Helper {
             PreparedStatement loginreadstmt = con.prepareStatement("SELECT lastlogin FROM member WHERE uname = ?;");
             loginreadstmt.setString(1, uname);
             ResultSet loginreadrs = loginreadstmt.executeQuery();
-            if (loginreadrs.next()) {
+            if (loginreadrs.next() && loginreadrs.getObject("lastlogin") != null) {
                 System.out.println("Last seen: " + (loginreadrs.getString("lastlogin")));
+                writeLoginTime(con);
             } else {
                 System.out.println("First login, welcome!");
+                writeLoginTime(con);
             }
 
         } catch (Exception e) {

@@ -1,5 +1,6 @@
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.util.Scanner;
 
 class App {
@@ -41,7 +42,9 @@ class App {
                             }
                             break;
                         case 3:
-                            System.out.println("nothing here");
+                            System.out.println("clearing member table");
+                            PreparedStatement deletemembers = con.prepareStatement("DELETE FROM member;");
+                            deletemembers.executeUpdate();
                             break;
                         case 4:
                             isRunning = false;
