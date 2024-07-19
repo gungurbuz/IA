@@ -7,7 +7,6 @@ public class Password {
 
     public static String makePass(String plainpass) {
         try {
-            /* MessageDigest instance for MD5. */
             MessageDigest m = MessageDigest.getInstance("SHA256");
             password = plainpass;
 
