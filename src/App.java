@@ -2,11 +2,10 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.util.Scanner;
-import java.util.Objects;
 
 class App {
+    private static Connection con = null;
     public static void main(String[] args) {
-        Connection con = null;
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             con = DriverManager.getConnection("jdbc:mysql://172.26.114.217:3306/library", "root", "1234");

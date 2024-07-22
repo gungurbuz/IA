@@ -34,7 +34,7 @@ public class Helper {
                 System.out.println("User not found.");
             }
         } catch (Exception e) {
-            System.out.println(e);
+            e.printStackTrace();
         }
         return false;
     }
@@ -47,7 +47,7 @@ public class Helper {
             loginstampstmt.setString(2, currentUsername);
             loginstampstmt.executeUpdate();
         } catch (Exception e) {
-            System.out.println(e);
+            e.printStackTrace();
         }
     }
 
@@ -65,7 +65,7 @@ public class Helper {
             }
 
         } catch (Exception e) {
-            System.out.println(e);
+            e.printStackTrace();
         }
     }
 
@@ -101,7 +101,7 @@ public class Helper {
             wait(500);
             clearConsole();
         } catch (Exception e) {
-            System.out.println(e);
+            e.printStackTrace();
         }
 
     }

@@ -29,7 +29,7 @@ public class Library {
     //    try{
     //        PreparedStatement addbookstmt = con.prepareStatement("INSERT INTO book (?, ? )")
     //    } catch(Exception e){
-    //        System.out.println(e);
+    //        e.printStackTrace();
     //    }
     //}
 }
