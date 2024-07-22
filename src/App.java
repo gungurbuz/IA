@@ -2,6 +2,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.util.Scanner;
+import java.util.Objects;
 
 class App {
     public static void main(String[] args) {
@@ -87,5 +88,9 @@ class App {
         } catch (Exception e) {
             System.out.println("Failed to close the database connection: " + e);
         }
+    }
+
+    public static Connection getConnection() {
+        return con;
     }
 }
