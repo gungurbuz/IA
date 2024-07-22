@@ -8,7 +8,7 @@ class App {
         Connection con = null;
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            con = DriverManager.getConnection("jdbc:mysql://172.26.114.217:3306/mydb", "root", "1234");
+            con = DriverManager.getConnection("jdbc:mysql://172.26.114.217:3306/library", "root", "1234");
         } catch (Exception e) {
             System.out.println("Database connection failed: " + e);
             return;
