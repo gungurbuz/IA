@@ -8,37 +8,39 @@ public class Library {
     private static Scanner s = new Scanner(System.in);
     private static String booktitle = "";
     private static ArrayList<String> authors = new ArrayList<String>();
-    private static String ISBN= "";
+    private static String ISBN = "";
     private static String ISBN13 = "";
     Connection con = App.getConnection();
 
-    public static void addBookPublic(){
+    public static void addBookPublic() {
         boolean check = false;
         System.out.println("Input book title:");
         booktitle = s.nextLine();
         Helper.clearConsole();
         System.out.println("Input book author(s), press enter after each author, press enter on empty line to proceed");
-        do{
+        do {
             String tempinput = s.nextLine();
-            if(tempinput.equals("")){
+            if (tempinput.equals("")) {
                 check = true;
-            }
-            else{
+            } else {
                 authors.add(tempinput);
             }
             Helper.clearConsole();
-        }
-        while(check == false);
+            System.out.println(
+                    "Input book author(s), press enter after each author, press enter on empty line to proceed");
+        } while (check == false);
         System.out.println("Input ISBN without hypens or spaces");
         ISBN = s.nextLine();
-        if (ISBN.length() == 10){ 
+        if (ISBN.length() == 10) {
             ISBN13 = ISBNValidator.getInstance().convertToISBN13(ISBN);
+        } else
+            ISBN13 = ISBN;
+
+        System.out.println(booktitle);
+        for (String i : authors){
+            System.out.println(i);
         }
-        else ISBN13 = ISBN;
-        
-        
-
-
+        System.out.println(ISBN13);
     }
 
     private void addBook() {
@@ -48,4 +50,5 @@ public class Library {
             e.printStackTrace();
         }
     }
+
 }
