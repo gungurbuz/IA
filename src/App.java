@@ -43,7 +43,8 @@ class App {
                             break;
                         case 3:
                             System.out.println("testing book adder");
-                            Library.addBookPublic();
+                            Library libraryClass = new Library();
+                            libraryClass.addBookPublic();
                             //PreparedStatement deletemembers = con.prepareStatement("DELETE FROM member;");
                             //deletemembers.executeUpdate();
                             break;

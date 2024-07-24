@@ -9,97 +9,108 @@ import java.util.Objects;
 import org.apache.commons.validator.routines.ISBNValidator;
 
 public class Library {
-    private static Scanner s = new Scanner(System.in);
-    private static String booktitle = "";
-    private static ArrayList<String> authorFirstNames = new ArrayList<String>();
-    private static ArrayList<String> authorLastNames = new ArrayList<String>();
-    private static String ISBN = "";
-    private static String ISBN13 = "";
-    private static String genre = "";
-    private static String pubYear = "";
-    private static boolean isLang = false;
-    private static boolean isPublisher = false;
-    private static Connection con = App.getConnection(); // get connection object created in app
+    private Scanner s = new Scanner(System.in);
+    private String booktitle = "";
+    private ArrayList<String> authorFirstNames = new ArrayList<String>();
+    private ArrayList<String> authorLastNames = new ArrayList<String>();
+    private String ISBN = "";
+    private String ISBN13 = "";
+    private String genre = "";
+    private String pubYear = "";
+    private boolean isLang = false;
+    private boolean isPublisher = false;
+    private Connection con = App.getConnection(); // get connection object created in app
 
-    public static void addBookPublic() {
-
-        boolean isAuthor = false;
-        Helper.clearConsole();
-        System.out.println("Input book title:");
-        booktitle = s.nextLine();
-        do { // seperating author names by first name/last name
+    public void addBookPublic() {
+        try {
+            boolean isAuthor = false;
             Helper.clearConsole();
-            System.out.println("Input author's first name");
-            String tempFirstName = s.nextLine();
+            System.out.println("Input book title:");
+            booktitle = s.nextLine();
+            do { // seperating author names by first name/last name
+                Helper.clearConsole();
+                System.out.println("Input author's first name");
+                String tempFirstName = s.nextLine();
+                Helper.clearConsole();
+                System.out.println("Input author's last name, or type 999 for no last name");
+                String tempLastName = s.nextLine();
+                if (tempLastName.equals("999")) {
+                    tempLastName = null;
+                }
+                authorFirstNames.add(tempFirstName);
+                authorLastNames.add(tempLastName);
+                Helper.clearConsole();
+                System.out.println(
+                        "Press enter on empty line to continue adding authors, or type 999 to continue");
+                String continueInput = s.nextLine();
+                if (continueInput.equals("999")) {
+                    isAuthor = true;
+                }
+            } while (!isAuthor); // allow for multiple authors to be entered
             Helper.clearConsole();
-            System.out.println("Input author's last name, or type 999 for no last name");
-            String tempLastName = s.nextLine();
-            if (tempLastName.equals("999")) {
-                tempLastName = null;
+            System.out.println("Input ISBN without hypens or spaces");
+            ISBN = s.nextLine();
+            if (ISBN.length() == 10) {
+                ISBN13 = ISBNValidator.getInstance().convertToISBN13(ISBN); // converts pre-2007 10 digit ISBN numbers
+                                                                            // to
+                                                                            // the current 13 digit standard
+            } else {
+                ISBN13 = ISBN;
             }
-            authorFirstNames.add(tempFirstName);
-            authorLastNames.add(tempLastName);
+            HashMap<Integer, String> languageNames = new HashMap<Integer, String>();
+            int langChoice;
+
+            do {
+                langChoice = languageSelect(languageNames);
+            } while (!isLang);
+
             Helper.clearConsole();
-            System.out.println(
-                    "Press enter on empty line to continue adding authors, or type 999 to continue");
-            String continueInput = s.nextLine();
-            if (continueInput.equals("999")) {
-                isAuthor = true;
+
+            System.out.println("[Optional]Input book genre (press enter to leave empty)");
+            String tempGenre = s.nextLine();
+            if (Objects.nonNull(tempGenre)) {
+                genre = tempGenre;
             }
-        } while (!isAuthor); // allow for multiple authors to be entered
-        Helper.clearConsole();
-        System.out.println("Input ISBN without hypens or spaces");
-        ISBN = s.nextLine();
-        if (ISBN.length() == 10) {
-            ISBN13 = ISBNValidator.getInstance().convertToISBN13(ISBN); // converts pre-2007 10 digit ISBN numbers to
-                                                                        // the current 13 digit standard
-        } else {
-            ISBN13 = ISBN;
+
+            Helper.clearConsole();
+
+            System.out.println("Input year of publishing in YYYY format");
+            pubYear = s.nextLine();
+
+            HashMap<Integer, String> publishers = new HashMap<Integer, String>();
+            int publisherChoice;
+            do {
+                publisherChoice = publisherSelect(publishers);
+            } while (!isPublisher);
+            // System.out.println(booktitle); // debugging stuff
+            // for (int i = 0; i < authorFirstNames.size(); i++) {
+            // System.out.println(authorFirstNames.get(i));
+            // System.out.println(authorLastNames.get(i));
+            // }
+            // System.out.println(ISBN13);
+            // for (String i : languageNames.values()) {
+            // System.out.println(i);
+            // }
+            // try {
+            // Statement langstmt = con.createStatement();
+            // ResultSet langstmtrs = langstmt.executeQuery("select * from language;");
+            // System.out.println(langstmtrs.getString("languagename"));
+            // } catch (Exception e) {
+            // e.printStackTrace();
+            // }
+        } catch (Exception e) {
+            e.printStackTrace();
+            //booktitle = ""; //unneeded code
+            //authorFirstNames.clear();
+            //authorLastNames.clear();
+            //ISBN = "";
+            //ISBN13 = "";
+            //genre = "";
+            //pubYear = "";
         }
-        HashMap<Integer, String> languageNames = new HashMap<Integer, String>();
-        int langChoice;
-
-        do {
-            langChoice = languageSelect(languageNames);
-        } while (!isLang);
-
-        Helper.clearConsole();
-
-        System.out.println("[Optional]Input book genre (press enter to leave empty)");
-        String tempGenre = s.nextLine();
-        if (Objects.nonNull(tempGenre)) {
-            genre = tempGenre;
-        }
-
-        Helper.clearConsole();
-
-        System.out.println("Input year of publishing in YYYY format");
-        pubYear = s.nextLine();
-
-        HashMap<Integer, String> publishers = new HashMap<Integer, String>();
-        int publisherChoice;
-        do {
-            publisherChoice = publisherSelect(publishers);
-        } while (!isPublisher);
-        // System.out.println(booktitle); // debugging stuff
-        // for (int i = 0; i < authorFirstNames.size(); i++) {
-        // System.out.println(authorFirstNames.get(i));
-        // System.out.println(authorLastNames.get(i));
-        // }
-        // System.out.println(ISBN13);
-        // for (String i : languageNames.values()) {
-        // System.out.println(i);
-        // }
-        // try {
-        // Statement langstmt = con.createStatement();
-        // ResultSet langstmtrs = langstmt.executeQuery("select * from language;");
-        // System.out.println(langstmtrs.getString("languagename"));
-        // } catch (Exception e) {
-        // e.printStackTrace();
-        // }
     }
 
-    private static int languageSelect(HashMap<Integer, String> langNames) {
+    private int languageSelect(HashMap<Integer, String> langNames) {
         Helper.wait(500);
         String tempLang = "";
         Helper.clearConsole();
@@ -148,7 +159,7 @@ public class Library {
         return 0;
     }
 
-    private static int publisherSelect(HashMap<Integer, String> publisherNames) {
+    private int publisherSelect(HashMap<Integer, String> publisherNames) {
         Helper.wait(500);
         String tempPublisher = "";
         Helper.clearConsole();
