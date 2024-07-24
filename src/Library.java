@@ -82,6 +82,7 @@ public class Library {
             do {
                 publisherChoice = publisherSelect(publishers);
             } while (!isPublisher);
+            //addBook(); to do
             // System.out.println(booktitle); // debugging stuff
             // for (int i = 0; i < authorFirstNames.size(); i++) {
             // System.out.println(authorFirstNames.get(i));
@@ -100,13 +101,13 @@ public class Library {
             // }
         } catch (Exception e) {
             e.printStackTrace();
-            //booktitle = ""; //unneeded code
-            //authorFirstNames.clear();
-            //authorLastNames.clear();
-            //ISBN = "";
-            //ISBN13 = "";
-            //genre = "";
-            //pubYear = "";
+            // booktitle = ""; // unneeded code
+            // authorFirstNames.clear();
+            // authorLastNames.clear();
+            // ISBN = "";
+            // ISBN13 = "";
+            // genre = "";
+            // pubYear = "";
         }
     }
 
