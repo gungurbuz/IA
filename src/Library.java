@@ -11,30 +11,43 @@ import org.apache.commons.validator.routines.ISBNValidator;
 public class Library {
     private static Scanner s = new Scanner(System.in);
     private static String booktitle = "";
-    private static ArrayList<String> authors = new ArrayList<String>();
+    private static ArrayList<String> authorFirstNames = new ArrayList<String>();
+    private static ArrayList<String> authorLastNames = new ArrayList<String>();
     private static String ISBN = "";
     private static String ISBN13 = "";
+    private static String genre = "";
+    private static String pubYear = "";
+    private static boolean isLang = false;
+    private static boolean isPublisher = false;
     private static Connection con = App.getConnection(); // get connection object created in app
 
     public static void addBookPublic() {
 
-        boolean check = false;
+        boolean isAuthor = false;
         Helper.clearConsole();
         System.out.println("Input book title:");
         booktitle = s.nextLine();
-        Helper.clearConsole();
-        System.out.println("Input book author(s), press enter after each author, press enter on empty line to proceed");
-        do {
-            String tempinput = s.nextLine();
-            if (tempinput.equals("")) {
-                check = true;
-            } else {
-                authors.add(tempinput);
+        do { // seperating author names by first name/last name
+            Helper.clearConsole();
+            System.out.println("Input author's first name");
+            String tempFirstName = s.nextLine();
+            Helper.clearConsole();
+            System.out.println("Input author's last name, or type 999 for no last name");
+            String tempLastName = s.nextLine();
+            if (tempLastName.equals("999")) {
+                tempLastName = null;
             }
+            authorFirstNames.add(tempFirstName);
+            authorLastNames.add(tempLastName);
             Helper.clearConsole();
             System.out.println(
-                    "Input book author(s), press enter after each author, press enter on empty line to proceed");
-        } while (check == false); // allow for multiple authors to be entered
+                    "Press enter on empty line to continue adding authors, or type 999 to continue");
+            String continueInput = s.nextLine();
+            if (continueInput.equals("999")) {
+                isAuthor = true;
+            }
+        } while (!isAuthor); // allow for multiple authors to be entered
+        Helper.clearConsole();
         System.out.println("Input ISBN without hypens or spaces");
         ISBN = s.nextLine();
         if (ISBN.length() == 10) {
@@ -43,53 +56,147 @@ public class Library {
         } else {
             ISBN13 = ISBN;
         }
-        boolean isLang = false;
+        HashMap<Integer, String> languageNames = new HashMap<Integer, String>();
+        int langChoice;
 
         do {
-            HashMap<Integer, String> languageNames = new HashMap<Integer, String>();
-            String tempLang = "";
-            Helper.clearConsole();
-            System.out.println("Choose language from options below or enter 999 to add a new one");
-            int i = 1;
-            try {
-                Statement langstmt = con.createStatement();
-                ResultSet langstmtrs = langstmt.executeQuery("select * from language;");
-                while (langstmtrs.next()) { // prints language list for user to choose
-                    tempLang = langstmtrs.getString("languagename");
-                    System.out.print(i + ". ");
-                    System.out.println(tempLang);
-                    languageNames.put(i, tempLang); // adds languages to hashmap to check against when making a choice
-                    i = i + 1;
-                }
-                System.out.println("999. Add new language");
-                String langChoice = s.nextLine();
-                if (langChoice.equals(null) && !isLang) {
-                    System.out.println("Invalid input, try again.");
-                } else if (Objects.nonNull(langChoice)) {
-                    int langId = Integer.parseInt(langChoice);
-                    if (languageNames.get(langId).equals(null) && langId != 999) { // checks if user input is a valid
-                                                                                   // language and not a new language
-                                                                                   // entry
-                        System.out.println("Invalid input, please choose a language from the list.");
-                    } else if (languageNames.get(langId).equals(null) && langId == 999) {
-                        System.out.println("Type name of new language below and press enter:");
-                        String newLang = s.nextLine();
-                        PreparedStatement addlangstmt = con
-                                .prepareStatement("INSERT INTO language (languagename) VALUES (?);");
-                        addlangstmt.setString(1, newLang);
-                    }
-                }
-
-            } catch (Exception e) {
-                System.out.println("Invalid input, try again.");
-                e.printStackTrace();
-            }
+            langChoice = languageSelect(languageNames);
         } while (!isLang);
+
+        Helper.clearConsole();
+
+        System.out.println("[Optional]Input book genre (press enter to leave empty)");
+        String tempGenre = s.nextLine();
+        if (Objects.nonNull(tempGenre)) {
+            genre = tempGenre;
+        }
+
+        Helper.clearConsole();
+
+        System.out.println("Input year of publishing in YYYY format");
+        pubYear = s.nextLine();
+
+        HashMap<Integer, String> publishers = new HashMap<Integer, String>();
+        int publisherChoice;
+        do {
+            publisherChoice = publisherSelect(publishers);
+        } while (!isPublisher);
         // System.out.println(booktitle); // debugging stuff
-        // for (String i : authors) {
-        // System.out.println(i);
+        // for (int i = 0; i < authorFirstNames.size(); i++) {
+        // System.out.println(authorFirstNames.get(i));
+        // System.out.println(authorLastNames.get(i));
         // }
         // System.out.println(ISBN13);
+        // for (String i : languageNames.values()) {
+        // System.out.println(i);
+        // }
+        // try {
+        // Statement langstmt = con.createStatement();
+        // ResultSet langstmtrs = langstmt.executeQuery("select * from language;");
+        // System.out.println(langstmtrs.getString("languagename"));
+        // } catch (Exception e) {
+        // e.printStackTrace();
+        // }
+    }
+
+    private static int languageSelect(HashMap<Integer, String> langNames) {
+        Helper.wait(500);
+        String tempLang = "";
+        Helper.clearConsole();
+        System.out.println("Choose language from options below or enter 999 to add a new one");
+        int i = 1;
+        try {
+            Statement langstmt = con.createStatement();
+            ResultSet langstmtrs = langstmt.executeQuery("select * from language;");
+            while (langstmtrs.next()) { // prints language list for user to choose
+                tempLang = langstmtrs.getString("languagename");
+                System.out.print(i + ". ");
+                System.out.println(tempLang);
+                langNames.put(i, tempLang); // adds languages to hashmap to check against when making a choice
+                i = i + 1;
+            }
+            System.out.println("999. Add new language");
+            String langChoiceString = s.nextLine();
+            if (langChoiceString.equals(null)) {
+                System.out.println("Invalid input, please enter a number.");
+            } else if (Objects.nonNull(langChoiceString)) {
+                int langId = Integer.parseInt(langChoiceString);
+                if (Objects.isNull(langNames.get(langId)) && langId != 999) { // checks if user input is a valid
+                                                                              // language and not a new language
+                                                                              // entry
+                    System.out.println("Invalid input, please choose a language from the list.");
+                    return 0;
+                } else if (Objects.isNull(langNames.get(langId)) && langId == 999) {
+                    System.out.println("Type name of new language below and press enter:");
+                    String newLang = s.nextLine();
+                    PreparedStatement addlangstmt = con
+                            .prepareStatement("INSERT INTO language (languagename) VALUES (?);");
+                    addlangstmt.setString(1, newLang);
+                    addlangstmt.executeUpdate();
+                    isLang = true;
+                    return i + 1;
+                } else if (Objects.nonNull(langNames.get(langId))) {
+                    isLang = true;
+                    return langId;
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Invalid input, try again.");
+            e.printStackTrace();
+        }
+        System.out.println("test");
+        return 0;
+    }
+
+    private static int publisherSelect(HashMap<Integer, String> publisherNames) {
+        Helper.wait(500);
+        String tempPublisher = "";
+        Helper.clearConsole();
+        System.out.println("Choose publisher from options below or enter 999 to add a new one");
+        int i = 1;
+        try {
+            Statement publisherstmt = con.createStatement();
+            ResultSet publisherstmtrs = publisherstmt.executeQuery("select * from publisher;");
+            while (publisherstmtrs.next()) { // prints language list for user to choose
+                tempPublisher = publisherstmtrs.getString("publishername");
+                System.out.print(i + ". ");
+                System.out.println(tempPublisher);
+                publisherNames.put(i, tempPublisher); // adds publishers to hashmap to check against when making a
+                                                      // choice
+                i = i + 1;
+            }
+            System.out.println("999. Add new publisher");
+            String PublisherChoiceString = s.nextLine();
+            if (PublisherChoiceString.equals(null)) {
+                System.out.println("Invalid input, please enter a number.");
+            } else if (Objects.nonNull(PublisherChoiceString)) {
+                int publisherId = Integer.parseInt(PublisherChoiceString);
+                if (Objects.isNull(publisherNames.get(publisherId)) && publisherId != 999) { // checks if user input is
+                                                                                             // a valid
+                    // publisher and not a new publisher
+                    // entry
+                    System.out.println("Invalid input, please choose a publisher from the list.");
+                    return 0;
+                } else if (Objects.isNull(publisherNames.get(publisherId)) && publisherId == 999) {
+                    System.out.println("Type name of new publisher below and press enter:");
+                    String newPublisher = s.nextLine();
+                    PreparedStatement addpubstmt = con
+                            .prepareStatement("INSERT INTO publisher (publishername) VALUES (?);");
+                    addpubstmt.setString(1, newPublisher);
+                    addpubstmt.executeUpdate();
+                    isPublisher = true;
+                    return i + 1;
+                } else if (Objects.nonNull(publisherNames.get(publisherId))) {
+                    isPublisher = true;
+                    return publisherId;
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Invalid input, try again.");
+            e.printStackTrace();
+        }
+        System.out.println("test");
+        return 0;
     }
 
     private void addBook() {
