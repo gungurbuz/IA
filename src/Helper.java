@@ -13,12 +13,22 @@ public class Helper {
     static Console cons = System.console();
     private static String currentUsername;
 
-    public static boolean login(Connection con) {
+    public static void logout() {
+        currentUsername = null;
+    }
+
+    public static boolean isAdmin(){
+        if(currentUsername)
+    }
+
+    public static boolean login() {
+        Connection con = App.getConnection();
+        Password password = new Password();
         System.out.println("Enter Username:");
         String uname = s.nextLine();
         System.out.println("Enter Password:");
         String plainpass = readPasswordtoString();
-        String passhash = Password.makePass(plainpass);
+        String passhash = password.makePass(plainpass);
         try {
             PreparedStatement loginstmt = con.prepareStatement("SELECT passhash FROM member WHERE uname = ?;");
             loginstmt.setString(1, uname);
@@ -88,7 +98,8 @@ public class Helper {
                 System.out.println("Passwords do not match!");
             }
         } while (!passMatch);
-        String passHash = Password.makePass(plainpass);
+        Password password = new Password();
+        String passHash = password.makePass(plainpass);
         try {
             PreparedStatement signupstmt = con.prepareStatement(
                     "INSERT INTO member (uname, fname, sname, passhash) VALUES (?, ?, ?, ?);");

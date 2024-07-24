@@ -2,10 +2,10 @@ import java.security.NoSuchAlgorithmException;
 import java.security.MessageDigest;
 
 public class Password {
-    private static String password = null;
-    private static String encryptedpassword = null;
+    private String password = null;
+    private String encryptedpassword = null;
 
-    public static String makePass(String plainpass) {
+    public String makePass(String plainpass) {
         try {
             MessageDigest m = MessageDigest.getInstance("SHA256");
             password = plainpass;

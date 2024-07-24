@@ -5,6 +5,9 @@ import java.util.Scanner;
 
 class App {
     private static Connection con = null;
+    private static boolean isAuthenticated = false;
+    private static boolean isAdmin = false;
+
     public static void main(String[] args) {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -16,13 +19,13 @@ class App {
 
         Scanner scanner = new Scanner(System.in);
         boolean isRunning = true;
-        boolean isAuthenticated = false;
+
         String username = null;
 
         while (isRunning) {
             try {
                 if (!isAuthenticated) {
-                    System.out.println("Select an option: 1. Signup 2. Login 3. Test 4. Exit");
+                    System.out.println("Select an option: 1. Signup 2. Login 3. Test 999. Exit");
                     int choice = scanner.nextInt();
                     scanner.nextLine(); // Consume newline
 
@@ -32,6 +35,7 @@ class App {
                             break;
                         case 2:
                             isAuthenticated = Helper.login(con);
+                            isAdmin = 
                             if (isAuthenticated) {
                                 System.out.println("Login successful.");
                                 Helper.wait(100);
@@ -42,13 +46,12 @@ class App {
                             }
                             break;
                         case 3:
-                            System.out.println("testing book adder");
-                            Library libraryClass = new Library();
-                            libraryClass.addBookPublic();
-                            //PreparedStatement deletemembers = con.prepareStatement("DELETE FROM member;");
-                            //deletemembers.executeUpdate();
+                            // PreparedStatement deletemembers = con.prepareStatement("DELETE FROM
+                            // member;");
+                            // deletemembers.executeUpdate();
+                            System.out.println("no active tests");
                             break;
-                        case 4:
+                        case 999:
                             isRunning = false;
                             break;
                         default:
@@ -56,19 +59,19 @@ class App {
                             Helper.wait(500);
                             Helper.clearConsole();
                     }
-                } else {
-                    System.out.println("Select an option: 1. Logout 2. Exit");
+                } else if (isAuthenticated && isAdmin) {
+                    System.out.println("Select an option: 1. Logout 2. Add Book 999. Exit");
                     int choice = scanner.nextInt();
                     scanner.nextLine(); // Consume newline
-
                     switch (choice) {
                         case 1:
-                            isAuthenticated = false;
-                            System.out.println("Logged out successfully.");
-                            Helper.wait(500);
-                            Helper.clearConsole();
+                            logout();
                             break;
                         case 2:
+                            System.out.println("testing book adder");
+                            Library libraryClass = new Library();
+                            libraryClass.addBookPublic();
+                        case 999:
                             isRunning = false;
                             break;
                         default:
@@ -76,7 +79,8 @@ class App {
                     }
                 }
             } catch (Exception e) {
-                System.out.println("An error occurred: " + e);
+                System.out.println("An error occurred: ");
+                e.printStackTrace();
                 scanner.nextLine(); // Consume newline if invalid input
             }
         }
@@ -87,11 +91,21 @@ class App {
                 con.close();
             }
         } catch (Exception e) {
-            System.out.println("Failed to close the database connection: " + e);
+            System.out.println("Failed to close the database connection: ");
+            e.printStackTrace();
         }
     }
 
     public static Connection getConnection() {
         return con;
+    }
+
+    private static void logout() {
+        isAuthenticated = false;
+        Helper.logout();
+        System.out.println("Logged out successfully.");
+        Helper.wait(500);
+        Helper.clearConsole();
+
     }
 }
