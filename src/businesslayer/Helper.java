@@ -1,3 +1,5 @@
+package businesslayer;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -5,24 +7,35 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
+
+import databaselayer.*;
 import java.io.Console;
 
 public class Helper {
 
-    static Scanner s = new Scanner(System.in);
-    static Console cons = System.console();
+    private static Scanner s = new Scanner(System.in);
+    private static Connection con;
+    private static Console cons;
     private static String currentUsername;
+
+    private Helper() {
+        try {
+            con = DatabaseConnector.getConnection(); // get connection object created in database layer
+            cons = ConsoleConnector.getConsole();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     public static void logout() {
         currentUsername = null;
     }
 
-    public static boolean isAdmin(){
-        if(currentUsername)
+    public static boolean login() {
+        return loginPrivate();
     }
 
-    public static boolean login() {
-        Connection con = App.getConnection();
+    private static boolean loginPrivate() {
         Password password = new Password();
         System.out.println("Enter Username:");
         String uname = s.nextLine();
@@ -49,7 +62,7 @@ public class Helper {
         return false;
     }
 
-    private static void writeLoginTime(Connection con) {
+    private static void writeLoginTime() {
         try {
             PreparedStatement loginstampstmt = con.prepareStatement(
                     "UPDATE member SET lastlogin = ? WHERE uname = ?");
@@ -61,17 +74,17 @@ public class Helper {
         }
     }
 
-    public static void readLastLogin(Connection con, String uname) {
+    public static void readLastLogin(String uname) {
         try {
             PreparedStatement loginreadstmt = con.prepareStatement("SELECT lastlogin FROM member WHERE uname = ?;");
             loginreadstmt.setString(1, uname);
             ResultSet loginreadrs = loginreadstmt.executeQuery();
             if (loginreadrs.next() && loginreadrs.getObject("lastlogin") != null) {
                 System.out.println("Last seen: " + (loginreadrs.getString("lastlogin")));
-                writeLoginTime(con);
+                writeLoginTime();
             } else {
                 System.out.println("First login, welcome!");
-                writeLoginTime(con);
+                writeLoginTime();
             }
 
         } catch (Exception e) {
@@ -79,7 +92,7 @@ public class Helper {
         }
     }
 
-    public static void signup(Connection con) {
+    public static void signup() {
         System.out.println("Enter Username:"); // same as login
         String uname = s.nextLine();
         System.out.println("Enter First Name:");

@@ -1,3 +1,5 @@
+package businesslayer;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -7,22 +9,39 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
 import org.apache.commons.validator.routines.ISBNValidator;
+import databaselayer.DatabaseConnector;
 
 public class Library {
     private Scanner s = new Scanner(System.in);
-    private String booktitle = "";
-    private ArrayList<String> authorFirstNames = new ArrayList<String>();
-    private ArrayList<String> authorLastNames = new ArrayList<String>();
-    private String ISBN = "";
-    private String ISBN13 = "";
-    private String genre = "";
-    private String pubYear = "";
-    private boolean isLang = false;
-    private boolean isPublisher = false;
-    private Connection con = App.getConnection(); // get connection object created in app
+    private Connection con;
+    private static Library library = null;
+
+    private Library() {
+        try {
+            con = DatabaseConnector.getConnection(); // get connection object created in database layer
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static Library getLibrary() {
+        if (library == null) {
+            library = new Library();
+        }
+        return library;
+    }
 
     public void addBookPublic() {
         try {
+            String booktitle = "";
+            ArrayList<String> authorFirstNames = new ArrayList<String>();
+            ArrayList<String> authorLastNames = new ArrayList<String>();
+            String ISBN = "";
+            String ISBN13 = "";
+            String genre = "";
+            String pubYear = "";
+            boolean isLang = false;
+            boolean isPublisher = false;
             boolean isAuthor = false;
             Helper.clearConsole();
             System.out.println("Input book title:");
@@ -61,7 +80,7 @@ public class Library {
             int langChoice;
 
             do {
-                langChoice = languageSelect(languageNames);
+                langChoice = languageSelect(languageNames, isLang);
             } while (!isLang);
 
             Helper.clearConsole();
@@ -80,9 +99,9 @@ public class Library {
             HashMap<Integer, String> publishers = new HashMap<Integer, String>();
             int publisherChoice;
             do {
-                publisherChoice = publisherSelect(publishers);
+                publisherChoice = publisherSelect(publishers, isPublisher);
             } while (!isPublisher);
-            //addBook(); to do
+            // addBook(); to do
             // System.out.println(booktitle); // debugging stuff
             // for (int i = 0; i < authorFirstNames.size(); i++) {
             // System.out.println(authorFirstNames.get(i));
@@ -111,7 +130,7 @@ public class Library {
         }
     }
 
-    private int languageSelect(HashMap<Integer, String> langNames) {
+    private int languageSelect(HashMap<Integer, String> langNames, boolean isLang) {
         Helper.wait(500);
         String tempLang = "";
         Helper.clearConsole();
@@ -160,7 +179,7 @@ public class Library {
         return 0;
     }
 
-    private int publisherSelect(HashMap<Integer, String> publisherNames) {
+    private int publisherSelect(HashMap<Integer, String> publisherNames, boolean isPublisher) {
         Helper.wait(500);
         String tempPublisher = "";
         Helper.clearConsole();

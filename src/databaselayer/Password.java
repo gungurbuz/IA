@@ -1,12 +1,19 @@
+package databaselayer;
+
 import java.security.NoSuchAlgorithmException;
 import java.security.MessageDigest;
 
 public class Password {
-    private String password = null;
-    private String encryptedpassword = null;
 
     public String makePass(String plainpass) {
+        return makePassPrivate(plainpass);
+    }
+
+    private String makePassPrivate(String plainpass) {
+        String password = null;
+        String encryptedpassword = null;
         try {
+
             MessageDigest m = MessageDigest.getInstance("SHA256");
             password = plainpass;
 

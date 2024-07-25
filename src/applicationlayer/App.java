@@ -1,21 +1,25 @@
+package applicationlayer;
 import java.sql.Connection;
 import java.sql.DriverManager;
 //import java.sql.PreparedStatement;
 import java.util.Scanner;
 
+import businesslayer.Helper;
+import businesslayer.Library;
+
 class App {
-    private static Connection con = null;
+   
     private static boolean isAuthenticated = false;
     private static boolean isAdmin = false;
 
     public static void main(String[] args) {
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            con = DriverManager.getConnection("jdbc:mysql://172.26.114.217:3306/library", "root", "1234");
-        } catch (Exception e) {
-            System.out.println("Database connection failed: " + e);
-            return;
-        }
+        
+        
+        
+        
+        
+        
+        
 
         Scanner scanner = new Scanner(System.in);
         boolean isRunning = true;
@@ -31,18 +35,17 @@ class App {
 
                     switch (choice) {
                         case 1:
-                            Helper.signup(con);
+                            Helper.signup();
                             break;
                         case 2:
-                            isAuthenticated = Helper.login(con);
-                            isAdmin = 
+                            isAuthenticated = Helper.login();
                             if (isAuthenticated) {
                                 System.out.println("Login successful.");
                                 Helper.wait(100);
                                 Helper.clearConsole();
                                 username = Helper.getUsername();
                                 System.out.println("Welcome " + username);
-                                Helper.readLastLogin(con, username);
+                                Helper.readLastLogin(username);
                             }
                             break;
                         case 3:
@@ -69,8 +72,7 @@ class App {
                             break;
                         case 2:
                             System.out.println("testing book adder");
-                            Library libraryClass = new Library();
-                            libraryClass.addBookPublic();
+                            Library.getLibrary().addBookPublic();
                         case 999:
                             isRunning = false;
                             break;
@@ -86,19 +88,8 @@ class App {
         }
 
         scanner.close();
-        try {
-            if (con != null && !con.isClosed()) {
-                con.close();
-            }
-        } catch (Exception e) {
-            System.out.println("Failed to close the database connection: ");
-            e.printStackTrace();
-        }
     }
 
-    public static Connection getConnection() {
-        return con;
-    }
 
     private static void logout() {
         isAuthenticated = false;
