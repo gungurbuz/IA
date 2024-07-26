@@ -44,20 +44,47 @@ CREATE TABLE `book` (
   `idbook` int NOT NULL AUTO_INCREMENT,
   `bookname` varchar(1024) NOT NULL,
   `isbn` varchar(13) DEFAULT NULL,
-  `idlang` int DEFAULT NULL,
-  `idauthor` int DEFAULT NULL,
-  `idtype` int DEFAULT NULL,
   `genre` varchar(45) DEFAULT NULL,
-  `pubyear` varchar(45) DEFAULT NULL,
+  `pubyear` year DEFAULT NULL,
   `idpublisher` int DEFAULT NULL,
   PRIMARY KEY (`idbook`),
   UNIQUE KEY `idbook_UNIQUE` (`idbook`),
-  KEY `idauthor_idx` (`idauthor`),
-  KEY `idlang_idx` (`idlang`),
   KEY `idpublisher_idx` (`idpublisher`),
-  CONSTRAINT `idauthor` FOREIGN KEY (`idauthor`) REFERENCES `author` (`idauthor`),
-  CONSTRAINT `idlang` FOREIGN KEY (`idlang`) REFERENCES `language` (`idlang`),
   CONSTRAINT `idpublisher` FOREIGN KEY (`idpublisher`) REFERENCES `publisher` (`idpublisher`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `bookauthors`
+--
+
+DROP TABLE IF EXISTS `bookauthors`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `bookauthors` (
+  `idbook` int NOT NULL,
+  `idauthor` int NOT NULL,
+  PRIMARY KEY (`idbook`,`idauthor`),
+  KEY `idauthor_idx` (`idauthor`),
+  CONSTRAINT `idauthor` FOREIGN KEY (`idauthor`) REFERENCES `author` (`idauthor`),
+  CONSTRAINT `idbookauthors` FOREIGN KEY (`idbook`) REFERENCES `book` (`idbook`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `booklanguages`
+--
+
+DROP TABLE IF EXISTS `booklanguages`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `booklanguages` (
+  `idbook` int NOT NULL,
+  `idlang` int NOT NULL,
+  PRIMARY KEY (`idbook`,`idlang`),
+  KEY `idlang_idx` (`idlang`),
+  CONSTRAINT `idbooklanguages` FOREIGN KEY (`idbook`) REFERENCES `book` (`idbook`),
+  CONSTRAINT `idlang` FOREIGN KEY (`idlang`) REFERENCES `language` (`idlang`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -91,7 +118,7 @@ CREATE TABLE `loan` (
   `returndate` date DEFAULT NULL,
   PRIMARY KEY (`idmember`,`takedate`,`idbook`),
   KEY `idbook_idx` (`idbook`),
-  CONSTRAINT `idbook` FOREIGN KEY (`idbook`) REFERENCES `book` (`idbook`),
+  CONSTRAINT `idbookloan` FOREIGN KEY (`idbook`) REFERENCES `book` (`idbook`),
   CONSTRAINT `idmember` FOREIGN KEY (`idmember`) REFERENCES `member` (`idmember`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -145,4 +172,4 @@ CREATE TABLE `publisher` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-07-23  1:42:19
+-- Dump completed on 2024-07-26 17:39:14
