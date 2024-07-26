@@ -2,7 +2,6 @@ package applicationlayer;
 
 import java.util.HashMap;
 import java.util.Objects;
-//import java.sql.PreparedStatement;
 import java.util.Scanner;
 
 import org.apache.commons.validator.routines.ISBNValidator;
