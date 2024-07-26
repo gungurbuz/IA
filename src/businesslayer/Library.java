@@ -5,9 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.Scanner;
-
-import com.mysql.cj.xdevapi.Result;
-
+import java.util.Stack;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
@@ -24,6 +22,7 @@ public class Library {
     private Library() {
         try {
             con = DatabaseConnector.getConnection(); // get connection object created in database layer
+            getLastInsertIdStatement = con.prepareStatement("SELECT LAST_INSERT_ID();");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -140,6 +139,7 @@ public class Library {
                     addpubstmt.executeUpdate();
                     return i + 1;
                 } else if (Objects.nonNull(publisherNames.get(publisherId))) {
+                    App.getCurrentBook().setPublisher(true);
                     return publisherId;
                 }
             }
@@ -151,36 +151,51 @@ public class Library {
         return 0;
     }
 
-    public void addBook(Book currentBook) { //to be completed
+    public void addBook(Book currentBook) { // to be completed
         try {
-            PreparedStatement addbookstmt = con.prepareStatement("INSERT INTO book (?, ?, ?, ?, ?)");
-            addbookstmt.setString(1, currentBook.getBooktitle());
-            addbookstmt.setString(2, currentBook.getISBN13());
-            addbookstmt.setString(3, currentBook.getGenre());
-            addbookstmt.setString(4, currentBook.getPubYear());
-            addbookstmt.setInt(5, currentBook.getPublisherId());
-            addbookstmt.executeUpdate();
-            int bookid = getLastInsertId();
-            
-            
-            
-            
-            for (int i = 0; i < currentBook.getAuthorFirstNames().size(), i++){
-                PreparedStatement addbookauthorsstmt = con.prepareStatement("INSERT INTO author (authorfname, authorsname) VALUES (?, ?)");
-                addbookauthorsstmt.setString(1, currentBook.getAuthorFirstNames().get(i));
-                addbookauthorsstmt.setString(2, currentBook.getAuthorLastNames().get(i));
-                addbookauthorsstmt.executeUpdate();
-                getLastInsertId(); //add into set/list/arraylist
-
+            PreparedStatement addBookStatement = con.prepareStatement(
+                    "INSERT INTO book (bookname, isbn, genre, pubyear, idpublisher) VALUES (?, ?, ?, ?, ?);");
+            addBookStatement.setString(1, currentBook.getBooktitle());
+            addBookStatement.setString(2, currentBook.getISBN13());
+            if (currentBook.getGenre().equals("")) {
+                addBookStatement.setString(3, null);
+            } else {
+                addBookStatement.setString(3, currentBook.getGenre());
             }
-            PreparedStatement addbookauthorstobridgestmt = con.prepareStatement("INSERT INTO bookauthors VALUES (?, ?)");
+            addBookStatement.setString(4, currentBook.getPubYear());
+            addBookStatement.setInt(5, currentBook.getPublisherId());
+            addBookStatement.executeUpdate();
+            int bookId = getLastInsertId();
+
+            Stack<Integer> authorIDStack = new Stack<Integer>();
+            PreparedStatement addBookAuthorsStatement = con
+                    .prepareStatement("INSERT INTO author (authorfname, authorsname) VALUES (?, ?);");
+            for (int i = 0; i < currentBook.getAuthorFirstNames().size(); i++) {
+                addBookAuthorsStatement.setString(1, currentBook.getAuthorFirstNames().get(i));
+                addBookAuthorsStatement.setString(2, currentBook.getAuthorLastNames().get(i));
+                addBookAuthorsStatement.executeUpdate();
+                authorIDStack.push(getLastInsertId());
+            }
+            PreparedStatement addBookAuthorsToBridgeStatement = con
+                    .prepareStatement("INSERT INTO bookauthors VALUES (?, ?);");
+            for (int i = 0; i < authorIDStack.size(); i++) {
+                addBookAuthorsToBridgeStatement.setInt(1, bookId);
+                addBookAuthorsToBridgeStatement.setInt(2, authorIDStack.pop());
+                addBookAuthorsToBridgeStatement.executeUpdate();
+            }
+            PreparedStatement addLanguagesToBridgeStatement = con
+                    .prepareStatement("INSERT INTO booklanguages VALUES (?, ?);");
+            for (int i = 0; i < currentBook.getLangIds().size(); i++) {
+                addLanguagesToBridgeStatement.setInt(1, bookId);
+                addLanguagesToBridgeStatement.setInt(2, currentBook.getLangIds().get(i));
+                addLanguagesToBridgeStatement.executeUpdate();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     private int getLastInsertId() throws Exception {
-        getLastInsertIdStatement = con.prepareStatement("SELECT LAST_INSERT_ID();");
         getLastInsertIdStatement.executeQuery();
         ResultSet getLastInsertIdStatementResultSet = getLastInsertIdStatement.getResultSet();
         getLastInsertIdStatementResultSet.next();

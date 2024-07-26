@@ -40,6 +40,7 @@ public class Helper {
     }
 
     public Member login() {
+        clearConsole();
         return loginPrivate();
     }
 
