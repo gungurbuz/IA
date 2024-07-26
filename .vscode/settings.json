@@ -15,7 +15,7 @@
             "port": 3306,
             "driver": "MySQL",
             "name": "testserver",
-            "database": "mydb",
+            "database": "library",
             "username": "root",
             "askForPassword": true
         }
