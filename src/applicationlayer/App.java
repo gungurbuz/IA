@@ -40,7 +40,7 @@ public class App {
 
         while (isRunning) {
             try {
-                if (Objects.nonNull(currentUser)) {
+                if (Objects.isNull(currentUser)) {
                     System.out.println("Select an option: 1. Signup 2. Login 3. Test 999. Exit");
                     int choice = scanner.nextInt();
                     scanner.nextLine(); // Consume newline

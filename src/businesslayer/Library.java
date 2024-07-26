@@ -5,6 +5,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.Scanner;
+
+import com.mysql.cj.xdevapi.Result;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
@@ -15,7 +18,7 @@ import databaselayer.DatabaseConnector;
 public class Library {
     private Scanner s = new Scanner(System.in);
     private Connection con;
-
+    private PreparedStatement getLastInsertIdStatement;
     private static Library library;
 
     private Library() {
@@ -156,9 +159,32 @@ public class Library {
             addbookstmt.setString(3, currentBook.getGenre());
             addbookstmt.setString(4, currentBook.getPubYear());
             addbookstmt.setInt(5, currentBook.getPublisherId());
+            addbookstmt.executeUpdate();
+            int bookid = getLastInsertId();
+            
+            
+            
+            
+            for (int i = 0; i < currentBook.getAuthorFirstNames().size(), i++){
+                PreparedStatement addbookauthorsstmt = con.prepareStatement("INSERT INTO author (authorfname, authorsname) VALUES (?, ?)");
+                addbookauthorsstmt.setString(1, currentBook.getAuthorFirstNames().get(i));
+                addbookauthorsstmt.setString(2, currentBook.getAuthorLastNames().get(i));
+                addbookauthorsstmt.executeUpdate();
+                getLastInsertId(); //add into set/list/arraylist
+
+            }
+            PreparedStatement addbookauthorstobridgestmt = con.prepareStatement("INSERT INTO bookauthors VALUES (?, ?)");
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private int getLastInsertId() throws Exception {
+        getLastInsertIdStatement = con.prepareStatement("SELECT LAST_INSERT_ID();");
+        getLastInsertIdStatement.executeQuery();
+        ResultSet getLastInsertIdStatementResultSet = getLastInsertIdStatement.getResultSet();
+        getLastInsertIdStatementResultSet.next();
+        return getLastInsertIdStatementResultSet.getInt(1);
     }
 
 }
