@@ -14,7 +14,7 @@ import businesslayer.Member;
 public class App {
     private static Scanner s = new Scanner(System.in);
     private static Member currentUser;
-    private static Book currentBook = new Book();
+    private static Book currentBook;
 
     public static Book getCurrentBook() {
         return currentBook;
@@ -95,7 +95,7 @@ public class App {
 
     private static void addBookApp() {
         String ISBN;
-
+        currentBook = new Book();
         try {
             boolean isAuthor = false;
             Helper.getHelper().clearConsole();
@@ -122,6 +122,8 @@ public class App {
                 }
             } while (!isAuthor); // allow for multiple authors to be entered
             Helper.getHelper().clearConsole();
+            boolean isISBN = false;
+            do{
             System.out.println("Input ISBN without hypens or spaces");
             ISBN = s.nextLine();
             if (ISBN.length() == 10) {
@@ -129,11 +131,14 @@ public class App {
                                                                                           // ISBN numbers
                 // to
                 // the current 13 digit standard
+                isISBN = true;
             } else if (ISBN.length() == 13) {
                 currentBook.setISBN13(ISBN);
+                isISBN = true;
             } else {
                 System.out.println("Invalid ISBN, please input 10 or 13 digit ISBN with no hypens or spaces");
             }
+        } while (!isISBN);
             HashMap<Integer, String> languageNames = new HashMap<Integer, String>();
             do {
                 currentBook.setLangIds(businesslayer.Library.getLibrary().languageSelect(languageNames));

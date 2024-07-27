@@ -71,7 +71,7 @@ public class Library {
                                 .prepareStatement("INSERT INTO language (languagename) VALUES (?);");
                         addlangstmt.setString(1, newLang);
                         addlangstmt.executeUpdate();
-                        langIds.add(i + 1);
+                        langIds.add(getLastInsertId());
 
                     } else if (Objects.nonNull(langNames.get(langId))) {
 
@@ -104,19 +104,20 @@ public class Library {
     public int publisherSelect(HashMap<Integer, String> publisherNames) {
         Helper.getHelper().wait(500);
         String tempPublisher = "";
+        int tempPublisherId;
         Helper.getHelper().clearConsole();
         System.out.println("Choose publisher from options below or enter 999 to add a new one");
-        int i = 1;
         try {
             Statement publisherstmt = con.createStatement();
             ResultSet publisherstmtrs = publisherstmt.executeQuery("select * from publisher;");
             while (publisherstmtrs.next()) { // prints language list for user to choose
                 tempPublisher = publisherstmtrs.getString("publishername");
-                System.out.print(i + ". ");
+                tempPublisherId = publisherstmtrs.getInt("idpublisher");
+                System.out.print(tempPublisherId + ". ");
                 System.out.println(tempPublisher);
-                publisherNames.put(i, tempPublisher); // adds publishers to hashmap to check against when making a
-                                                      // choice
-                i = i + 1;
+                publisherNames.put(tempPublisherId, tempPublisher); // adds publishers to hashmap to check against when
+                                                                    // making a
+                // choice
             }
             System.out.println("999. Add new publisher");
             String PublisherChoiceString = s.nextLine();
@@ -137,9 +138,10 @@ public class Library {
                             .prepareStatement("INSERT INTO publisher (publishername) VALUES (?);");
                     addpubstmt.setString(1, newPublisher);
                     addpubstmt.executeUpdate();
-                    return i + 1;
+                    return getLastInsertId();
                 } else if (Objects.nonNull(publisherNames.get(publisherId))) {
                     App.getCurrentBook().setPublisher(true);
+                    System.out.println(publisherNames.get(publisherId)); //debugging
                     return publisherId;
                 }
             }
@@ -147,7 +149,7 @@ public class Library {
             System.out.println("Invalid input, try again.");
             e.printStackTrace();
         }
-        System.out.println("test");
+        System.out.println("error");
         return 0;
     }
 
@@ -178,7 +180,7 @@ public class Library {
             }
             PreparedStatement addBookAuthorsToBridgeStatement = con
                     .prepareStatement("INSERT INTO bookauthors VALUES (?, ?);");
-            for (int i = 0; i < authorIDStack.size(); i++) {
+            for (int i = 1; i < authorIDStack.size(); i++) {
                 addBookAuthorsToBridgeStatement.setInt(1, bookId);
                 addBookAuthorsToBridgeStatement.setInt(2, authorIDStack.pop());
                 addBookAuthorsToBridgeStatement.executeUpdate();
