@@ -141,7 +141,7 @@ public class Library {
                     return getLastInsertId();
                 } else if (Objects.nonNull(publisherNames.get(publisherId))) {
                     App.getCurrentBook().setPublisher(true);
-                    System.out.println(publisherNames.get(publisherId)); //debugging
+                    System.out.println(publisherNames.get(publisherId)); // debugging
                     return publisherId;
                 }
             }

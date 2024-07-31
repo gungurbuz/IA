@@ -29,7 +29,7 @@ public class Helper {
     }
 
     public static Helper getHelper() {
-        if (helper== null) {
+        if (helper == null) {
             helper = new Helper();
         }
         return helper;
@@ -62,6 +62,7 @@ public class Helper {
                     return currentUser;
                 } else {
                     System.out.println("Invalid username or password.");
+                    wait(500);
                 }
             } else {
                 System.out.println("User not found.");
