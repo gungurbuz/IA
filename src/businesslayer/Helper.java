@@ -15,7 +15,7 @@ public class Helper {
 
     private static Scanner s = new Scanner(System.in);
     private static Connection con;
-    private static Console cons = System.console();
+    private static Console cons = ConsoleConnector.getConsole();
     private static Member currentUser;
     private static Helper helper;
 
@@ -45,7 +45,7 @@ public class Helper {
     }
 
     private Member loginPrivate() {
-        Password password = new Password();
+        Password password = new Password(); //move outside of method
         System.out.println("Enter Username:");
         String uname = s.nextLine();
         System.out.println("Enter Password:");
@@ -124,6 +124,7 @@ public class Helper {
         } while (!passMatch);
         Password password = new Password();
         String passHash = password.makePass(plainpass);
+        plainpass = null;
         try {
             PreparedStatement signupstmt = con.prepareStatement(
                     "INSERT INTO member (uname, fname, sname, passhash) VALUES (?, ?, ?, ?);");

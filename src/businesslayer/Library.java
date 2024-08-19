@@ -18,11 +18,42 @@ public class Library {
     private Connection con;
     private PreparedStatement getLastInsertIdStatement;
     private static Library library;
+    private static HashMap<Integer, Coordinate> libraryLocations;
+
+    public static HashMap<Integer, Coordinate> getLibraryLocations() {
+        return libraryLocations;
+    }
 
     private Library() {
         try {
             con = DatabaseConnector.getConnection(); // get connection object created in database layer
             getLastInsertIdStatement = con.prepareStatement("SELECT LAST_INSERT_ID();");
+            libraryLocations.put(1,  new Coordinate(1, 1));
+            libraryLocations.put(2,  new Coordinate(2, 1));
+            libraryLocations.put(3,  new Coordinate(4, 1));
+            libraryLocations.put(4,  new Coordinate(6, 1));
+            libraryLocations.put(5,  new Coordinate(7, 1));
+            libraryLocations.put(6,  new Coordinate(1, 2));
+            libraryLocations.put(7,  new Coordinate(2, 2));
+            libraryLocations.put(8,  new Coordinate(3, 2));
+            libraryLocations.put(9,  new Coordinate(4, 2));
+            libraryLocations.put(10, new Coordinate(5, 2));
+            libraryLocations.put(11, new Coordinate(6, 2));
+            libraryLocations.put(12, new Coordinate(7, 2));
+            libraryLocations.put(13, new Coordinate(1, 3));
+            libraryLocations.put(14, new Coordinate(2, 3));
+            libraryLocations.put(15, new Coordinate(6, 3));
+            libraryLocations.put(16, new Coordinate(7, 3));
+            libraryLocations.put(17, new Coordinate(1, 4));
+            libraryLocations.put(18, new Coordinate(2, 4));
+            libraryLocations.put(19, new Coordinate(6, 4));
+            libraryLocations.put(20, new Coordinate(7, 4));
+            libraryLocations.put(21, new Coordinate(2, 5));
+            libraryLocations.put(22, new Coordinate(6, 5));
+            libraryLocations.put(23, new Coordinate(7, 5));
+            libraryLocations.put(24, new Coordinate(1, 6));
+            libraryLocations.put(25, new Coordinate(2, 6));
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -33,6 +64,10 @@ public class Library {
             library = new Library();
         }
         return library;
+    }
+
+    public Coordinate setLocation(int x, int y) {
+        return new Coordinate(x, y);
     }
 
     public ArrayList<Integer> languageSelect(HashMap<Integer, String> langNames) {
@@ -156,7 +191,7 @@ public class Library {
     public void addBook(Book currentBook) { // to be completed
         try {
             PreparedStatement addBookStatement = con.prepareStatement(
-                    "INSERT INTO book (bookname, isbn, genre, pubyear, idpublisher) VALUES (?, ?, ?, ?, ?);");
+                    "INSERT INTO book (bookname, isbn, genre, pubyear, idpublisher, locationx, locationy) VALUES (?, ?, ?, ?, ?, ?, ?);");
             addBookStatement.setString(1, currentBook.getBooktitle());
             addBookStatement.setString(2, currentBook.getISBN13());
             if (currentBook.getGenre().equals("")) {
@@ -166,6 +201,8 @@ public class Library {
             }
             addBookStatement.setString(4, currentBook.getPubYear());
             addBookStatement.setInt(5, currentBook.getPublisherId());
+            addBookStatement.setInt(6, currentBook.getLocation().getX());
+            addBookStatement.setInt(7, currentBook.getLocation().getY());
             addBookStatement.executeUpdate();
             int bookId = getLastInsertId();
 
@@ -202,6 +239,26 @@ public class Library {
         ResultSet getLastInsertIdStatementResultSet = getLastInsertIdStatement.getResultSet();
         getLastInsertIdStatementResultSet.next();
         return getLastInsertIdStatementResultSet.getInt(1);
+    }
+
+    public void printLibraryModel() {
+        System.out.println("╔═════════╦═════════╦══════════════════════╦═════════╦═════════╗");
+        System.out.println("║    1    ║    2    ║           3          ║    4    ║    5    ║");
+        System.out.println("╠═════════╬═════════╬═══════╦═══════╦══════╬═════════╬═════════╣");
+        System.out.println("║    6    ║    7    ║   8   ║   9   ║  10  ║   11    ║    12   ║");
+        System.out.println("╠═════════╬═════════╬═══════╩═══════╩══════╬═════════╬═════════╣");
+        System.out.println("║    13   ║   14    ║██████████████████████║   15    ║    16   ║");
+        System.out.println("╠═════════╬═════════╣██████████████████████╠═════════╬═════════╣");
+        System.out.println("║    17   ║   18    ║█████UNAVAILABLE██████║   19    ║    20   ║");
+        System.out.println("╠═════════╬═════════╣██████████████████████╠═════════╬═════════╣");
+        System.out.println("║█████████║   21    ║██████████████████████║   22    ║    23   ║");
+        System.out.println("╠═════════╬═════════╬══════════════════════╬═════════╬═════════╣");
+        System.out.println("║         ║         ║█████UNAVAILABLE██████║█████████║█████████║");
+        System.out.println("║         ║         ╠══════════════════════╣█████████║█████████║");
+        System.out.println("║   24    ║   25    ║█████UNAVAILABLE██████║█████████║█████████║");
+        System.out.println("║         ║         ╠══════════════════════╣█████████║█████████║");
+        System.out.println("║         ║         ║█████UNAVAILABLE██████║█████████║█████████║");
+        System.out.println("╚═════════╩═════════╩══════════════════════╩═════════╩═════════╝");
     }
 
 }

@@ -158,6 +158,10 @@ public class App {
             do {
                 currentBook.setPublisherId(businesslayer.Library.getLibrary().publisherSelect(publishers));
             } while (!currentBook.isPublisher());
+            Library.getLibrary().printLibraryModel();
+            System.out.println("Select location");
+            int locationChoice = s.nextInt();
+            currentBook.setLocation(Library.getLibraryLocations().get(locationChoice));
             // addBook(); to do
             // System.out.println(booktitle); // debugging stuff
             // for (int i = 0; i < authorFirstNames.size(); i++) {

@@ -14,6 +14,15 @@ public class Book {
     private String genre = "";
     private String pubYear = "";
     private int publisherId;
+    private Coordinate location;
+
+    public Coordinate getLocation() {
+        return location;
+    }
+
+    public void setLocation(Coordinate location) {
+        this.location = location;
+    }
 
     public Book(String booktitle, ArrayList<String> authorFirstNames, ArrayList<String> authorLastNames, String iSBN,
             String iSBN13, String genre, String pubYear) {
