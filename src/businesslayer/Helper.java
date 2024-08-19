@@ -104,22 +104,28 @@ public class Helper {
     }
 
     public void signup() {
+        Helper.getHelper().clearConsole();
         System.out.println("Enter Username:"); // same as login
         String uname = s.nextLine();
+        Helper.getHelper().clearConsole();
         System.out.println("Enter First Name:");
         String fName = s.nextLine();
+        Helper.getHelper().clearConsole();
         System.out.println("Enter Last Name:");
         String sName = s.nextLine();
         boolean passMatch = false;
         String plainpass;
         do {
+            Helper.getHelper().clearConsole();
             System.out.println("Enter Password:");
             plainpass = readPasswordtoString();
+            Helper.getHelper().clearConsole();
             System.out.println("Reenter Password:");
             if (readPasswordtoString().equals(plainpass)) {
                 passMatch = true;
             } else {
                 System.out.println("Passwords do not match!");
+                Helper.getHelper().clearConsole();
             }
         } while (!passMatch);
         Password password = new Password();
@@ -139,7 +145,8 @@ public class Helper {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
+        System.out.println("test");
+        wait(500);
     }
 
     public String timeStamp() {

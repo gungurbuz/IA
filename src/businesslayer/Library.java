@@ -18,7 +18,7 @@ public class Library {
     private Connection con;
     private PreparedStatement getLastInsertIdStatement;
     private static Library library;
-    private static HashMap<Integer, Coordinate> libraryLocations;
+    private static HashMap<Integer, Coordinate> libraryLocations = new HashMap<>();
 
     public static HashMap<Integer, Coordinate> getLibraryLocations() {
         return libraryLocations;

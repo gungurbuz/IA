@@ -45,17 +45,19 @@ public class App {
                             currentUser = Helper.getHelper().login();
                             if (Objects.nonNull(currentUser)) {
                                 System.out.println("Login successful.");
-                                Helper.getHelper().wait(100);
+                                Helper.getHelper().wait(300);
                                 Helper.getHelper().clearConsole();
                                 System.out.println("Welcome " + currentUser.getUsername());
                                 Helper.getHelper().readLastLogin(currentUser.getUsername());
                             }
+                            Helper.getHelper().wait(500);
                             break;
                         case 3:
                             // PreparedStatement deletemembers = con.prepareStatement("DELETE FROM
                             // member;");
                             // deletemembers.executeUpdate();
                             System.out.println("no active tests");
+                            Helper.getHelper().wait(500);
                             break;
                         case 999:
                             isRunning = false;
