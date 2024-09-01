@@ -2,6 +2,8 @@ package databaselayer;
 
 import java.io.Console;
 
+import static java.lang.System.console;
+
 public class ConsoleConnector {
     private static Console cons;
 
@@ -13,6 +15,6 @@ public class ConsoleConnector {
     }
 
     private static Console createConsole() {
-        return System.console();
+        return console();
     }
 }
