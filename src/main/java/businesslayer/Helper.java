@@ -15,7 +15,7 @@ public class Helper {
 
     private static Scanner s = new Scanner(System.in);
     private static Connection con;
-    private static Console cons = ConsoleConnector.getConsole();
+    private static final Console cons = ConsoleConnector.getConsole();
     private static Member currentUser;
     private static Helper helper;
 
