@@ -1,9 +1,21 @@
 package applicationlayer;
 
+import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.gui2.*;
+import com.googlecode.lanterna.gui2.dialogs.ActionListDialogBuilder;
+import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
+import com.googlecode.lanterna.screen.Screen;
+import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
+import com.googlecode.lanterna.terminal.Terminal;
+
+import java.io.IOException;
+
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.Scanner;
 
+import com.sun.tools.javac.Main;
+import databaselayer.GUIConnector;
 import org.apache.commons.validator.routines.ISBNValidator;
 
 import businesslayer.Book;
@@ -13,11 +25,17 @@ import businesslayer.Member;
 
 public class App {
     private static final Scanner s = new Scanner(System.in);
+
     private static Member currentUser;
     private static Book currentBook;
-
+    private static final WindowBasedTextGUI gui = GUIConnector.getTextGUI();
+    public static boolean isRunning;
     public static Book getCurrentBook() {
         return currentBook;
+    }
+
+    public static void setIsRunning(boolean isRunning) {
+        App.isRunning = isRunning;
     }
 
     public static void setCurrentBook(Book currentBook) {
@@ -25,33 +43,15 @@ public class App {
     }
 
     public static void main(String[] args) {
-
         Scanner scanner = new Scanner(System.in);
-        boolean isRunning = true;
+        isRunning = true;
 
         while (isRunning) {
+            MainWindow unauthorizedWindow = new MainWindow();
             try {
                 if (Objects.isNull(currentUser)) {
-                    Helper.getHelper().clearConsole();
-                    System.out.println("Select an option: 1. Signup 2. Login 3. Test 999. Exit");
-                    int choice = scanner.nextInt();
-                    scanner.nextLine(); // Consume newline
+                    gui.addWindow(unauthorizedWindow);
 
-                    switch (choice) {
-                        case 1:
-                            Helper.getHelper().signup();
-                            break;
-                        case 2:
-                            currentUser = Helper.getHelper().login();
-                            if (Objects.nonNull(currentUser)) {
-                                System.out.println("Login successful.");
-                                Helper.getHelper().wait(300);
-                                Helper.getHelper().clearConsole();
-                                System.out.println("Welcome " + currentUser.getUsername());
-                                Helper.getHelper().readLastLogin(currentUser.getUsername());
-                            }
-                            Helper.getHelper().wait(500);
-                            break;
                         case 3:
                             // PreparedStatement deletemembers = con.prepareStatement("DELETE FROM
                             // member;");
@@ -91,10 +91,11 @@ public class App {
                 e.printStackTrace();
                 scanner.nextLine(); // Consume newline if invalid input
             }
+        scanner.close();
         }
 
-        scanner.close();
-    }
+
+
 
     private static void addBookApp() {
         String ISBN;
@@ -202,4 +203,5 @@ public class App {
         Helper.getHelper().clearConsole();
 
     }
+}
 }

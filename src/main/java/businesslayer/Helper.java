@@ -8,21 +8,25 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
+import applicationlayer.App;
+import com.googlecode.lanterna.gui2.BasicWindow;
+import com.googlecode.lanterna.gui2.Panel;
+import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
+import com.googlecode.lanterna.gui2.dialogs.TextInputDialog;
 import databaselayer.*;
-import java.io.Console;
 
 public class Helper {
 
-    private static Scanner s = new Scanner(System.in);
     private static Connection con;
-    private static final Console cons = ConsoleConnector.getConsole();
+    private static final WindowBasedTextGUI gui = GUIConnector.getTextGUI();
     private static Member currentUser;
     private static Helper helper;
+    private static final Password password = new Password();
 
     private Helper() {
         try {
             con = DatabaseConnector.getConnection(); // get connection object created in database layer
-            // cons = ConsoleConnector.getConsole();
+            // cons = TerminalConnector.getConsole();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -39,15 +43,9 @@ public class Helper {
         currentUser = null;
     }
 
-    public Member login() {
-        clearConsole();
-        return loginPrivate();
-    }
 
-    private Member loginPrivate() {
-        Password password = new Password(); //move outside of method
-        System.out.println("Enter Username:");
-        String uname = s.nextLine();
+    public Member login() {
+        //to be edited
         System.out.println("Enter Password:");
         String plainpass = readPasswordtoString();
         String passhash = password.makePass(plainpass);
@@ -85,16 +83,16 @@ public class Helper {
         }
     }
 
-    public void readLastLogin(String uname) {
+    public String readLastLogin(String uname) {
         try {
             PreparedStatement loginreadstmt = con.prepareStatement("SELECT lastlogin FROM member WHERE uname = ?;");
             loginreadstmt.setString(1, uname);
             ResultSet loginreadrs = loginreadstmt.executeQuery();
             if (loginreadrs.next() && loginreadrs.getObject("lastlogin") != null) {
-                System.out.println("Last seen: " + (loginreadrs.getString("lastlogin")));
+                return loginreadrs.getString("lastlogin");
                 writeLoginTime();
             } else {
-                System.out.println("First login, welcome!");
+                return null;
                 writeLoginTime();
             }
 
@@ -154,13 +152,13 @@ public class Helper {
     }
 
     private String readPasswordtoString() {
-        char[] passchars = cons.readPassword();
+        char[] passchars = terminal.readPassword();
         return new String(passchars);
     }
 
     public void clearConsole() {
         System.out.print("\033[H\033[2J");
-        Helper.cons.flush();
+        Helper.terminal.flush();
     }
 
     public void wait(int ms) {
