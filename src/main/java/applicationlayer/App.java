@@ -12,7 +12,7 @@ import businesslayer.Library;
 import businesslayer.Member;
 
 public class App {
-    private static Scanner s = new Scanner(System.in);
+    private static final Scanner s = new Scanner(System.in);
     private static Member currentUser;
     private static Book currentBook;
 
@@ -104,7 +104,7 @@ public class App {
             Helper.getHelper().clearConsole();
             System.out.println("Input book title:");
             currentBook.setBooktitle(s.nextLine());
-            do { // seperating author names by first name/last name
+            do { // separating author names by first name/last name
                 Helper.getHelper().clearConsole();
                 System.out.println("Input author's first name");
                 String tempFirstName = s.nextLine();
@@ -127,12 +127,12 @@ public class App {
             Helper.getHelper().clearConsole();
             boolean isISBN = false;
             do {
-                System.out.println("Input ISBN without hypens or spaces");
+                System.out.println("Input ISBN without hyphens or spaces");
                 ISBN = s.nextLine();
                 if (ISBN.length() == 10) {
                     currentBook.setISBN13(ISBNValidator.getInstance().convertToISBN13(ISBN)); // converts pre-2007 10
                                                                                               // digit
-                                                                                              // ISBN numbers
+                                                                                              // ISBNs
                     // to
                     // the current 13 digit standard
                     isISBN = true;
@@ -140,7 +140,7 @@ public class App {
                     currentBook.setISBN13(ISBN);
                     isISBN = true;
                 } else {
-                    System.out.println("Invalid ISBN, please input 10 or 13 digit ISBN with no hypens or spaces");
+                    System.out.println("Invalid ISBN, please input 10 or 13 digit ISBN with no hyphens or spaces");
                 }
             } while (!isISBN);
             HashMap<Integer, String> languageNames = new HashMap<Integer, String>();
