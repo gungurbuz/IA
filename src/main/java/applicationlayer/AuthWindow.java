@@ -1,17 +1,16 @@
 package applicationlayer;
 
 import businesslayer.Helper;
-import businesslayer.Library;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
 import databaselayer.GUIConnector;
 
-import java.util.Arrays;
+import java.util.List;
 
 public class AuthWindow extends BasicWindow {
 	public AuthWindow() {
 		super("Library Catalogue System");
-		setHints(Arrays.asList(Window.Hint.CENTERED));
+		setHints(List.of(Hint.CENTERED));
 		Panel horizontalPanel = new Panel();
 		horizontalPanel.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
 		Panel leftPanel = new Panel();

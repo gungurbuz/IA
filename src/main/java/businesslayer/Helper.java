@@ -6,14 +6,9 @@ import java.sql.ResultSet;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Scanner;
-
-import applicationlayer.App;
-import com.googlecode.lanterna.gui2.BasicWindow;
-import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
-import com.googlecode.lanterna.gui2.dialogs.TextInputDialog;
+
 import databaselayer.*;
 
 public class Helper {
@@ -28,7 +23,7 @@ public class Helper {
 			con = DatabaseConnector.getConnection(); // get connection object created in database layer
 			// cons = TerminalConnector.getConsole();
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
 	}
 	
@@ -113,7 +108,7 @@ public class Helper {
 			}
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
 		return lastLogin;
 	}

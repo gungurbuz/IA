@@ -1,7 +1,6 @@
 package applicationlayer;
 
 import businesslayer.Helper;
-import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.*;
 
 import java.util.HashMap;
@@ -23,8 +22,8 @@ public class App {
 	
 	private static final Scanner s = new Scanner(System.in);
 	
-	private static AtomicReference<Member> currentUser = new AtomicReference<Member>();
-	private static ThreadLocal<Book> currentBook = new ThreadLocal<Book>();
+	private static AtomicReference<Member> currentUser = new AtomicReference<>();
+	private static ThreadLocal<Book> currentBook = new ThreadLocal<>();
 	private static final WindowBasedTextGUI gui = getTextGUI();
 	public static final AtomicBoolean isRunning = new AtomicBoolean(false);
 	
@@ -112,7 +111,7 @@ public class App {
 					System.out.println("Invalid ISBN, please input 10 or 13 digit ISBN with no hyphens or spaces");
 				}
 			} while (!isISBN);
-			HashMap<Integer, String> languageNames = new HashMap<Integer, String>();
+			HashMap<Integer, String> languageNames = new HashMap<>();
 			do {
 				currentBook.get().setLangIds(businesslayer.Library.getLibrary().languageSelect(languageNames));
 			} while (!currentBook.get().isLang());
@@ -123,7 +122,7 @@ public class App {
 			}
 			System.out.println("Input year of publishing in YYYY format");
 			currentBook.get().setPubYear(s.nextLine());
-			HashMap<Integer, String> publishers = new HashMap<Integer, String>();
+			HashMap<Integer, String> publishers = new HashMap<>();
 			do {
 				currentBook.get().setPublisherId(businesslayer.Library.getLibrary().publisherSelect(publishers));
 			} while (!currentBook.get().isPublisher());
@@ -149,14 +148,7 @@ public class App {
 			// e.printStackTrace();
 			// }
 		} catch (Exception e) {
-			e.printStackTrace();
-			// booktitle = ""; // unneeded code
-			// authorFirstNames.clear();
-			// authorLastNames.clear();
-			// ISBN = "";
-			// ISBN13 = "";
-			// genre = "";
-			// pubYear = "";
+			throw new RuntimeException(e);
 		}
 		Library.getLibrary().addBook(currentBook.get());
 	}
