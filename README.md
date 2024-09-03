@@ -36,6 +36,9 @@ This repository contains the code for my Computer Science Internal Assessment, w
        - [x] No ISBN
        - [x] Outdated 10-digit ISBN
 
+## Known Problems
+
+- The native Windows console is not supported
 
 ## Installation
 
