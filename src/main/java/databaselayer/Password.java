@@ -16,11 +16,11 @@ public class Password {
     }
 
     private String makePassPrivate(String plainpass) {
-        String password = null;
+        String password;
         String encryptedpassword = null;
         try {
 
-            MessageDigest m = MessageDigest.getInstance("SHA256");
+            MessageDigest m = MessageDigest.getInstance("SHA-256");
             password = plainpass;
 
             /* Add plain-text password bytes to digest using MD5 update() method. */
