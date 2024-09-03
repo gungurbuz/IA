@@ -59,12 +59,12 @@ public class Helper {
 		gui.addWindowAndWait(login);
 		String uname = login.getUsername();
 		String passhash = login.getPassword();
-		try {
+		
 			ResultSet loginrs;
 			try (PreparedStatement loginstmt = con.prepareStatement("SELECT passhash FROM member WHERE uname = ?;")) {
 				loginstmt.setString(1, uname);
 				loginrs = loginstmt.executeQuery();
-			}
+			
 			if (loginrs.next()) {
 				if (loginrs.getString("passhash").equals(passhash)) {
 					currentUser = new Member(uname, passhash);
@@ -76,9 +76,13 @@ public class Helper {
 			} else {
 				MessageDialog.showMessageDialog(gui, "Error", "User not found");
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+			} catch (Exception e) {
+				e.printStackTrace();
+				MessageDialog.showMessageDialog(gui, "Error", "Error connecting to database");
+				login.close();
+				return null;
+			}
+		
 		return currentUser;
 	}
 	

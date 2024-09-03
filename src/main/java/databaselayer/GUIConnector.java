@@ -24,6 +24,14 @@ public class GUIConnector {
     private static Terminal terminal;
     private static Screen screen;
     private static WindowBasedTextGUI gui;
+    
+    public static void stopScreen(){
+	    try {
+		    screen.stopScreen();
+	    } catch (IOException e) {
+		    throw new RuntimeException(e);
+	    }
+    }
 
     public static WindowBasedTextGUI getTextGUI() {
         if (gui == null) {
@@ -38,7 +46,7 @@ public class GUIConnector {
         try {
             terminal = new DefaultTerminalFactory().createTerminal();;
             screen = new TerminalScreen(terminal);
-            tempgui = new MultiWindowTextGUI(screen, new DefaultWindowManager(), new EmptySpace(TextColor.ANSI.GREEN));
+            tempgui = new MultiWindowTextGUI(screen, new DefaultWindowManager(), new EmptySpace(TextColor.ANSI.CYAN));
             screen.startScreen();
         } catch (IOException e) {
             e.printStackTrace();
