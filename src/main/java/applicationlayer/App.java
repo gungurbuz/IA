@@ -1,5 +1,6 @@
 package applicationlayer;
 
+import businesslayer.Helper;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.*;
 
@@ -9,7 +10,7 @@ import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
-import databaselayer.GUIConnector;
+import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
 import org.apache.commons.validator.routines.ISBNValidator;
 
 import businesslayer.Book;
@@ -54,16 +55,18 @@ public class App {
 		isRunning.set(true);
 		
 		while (isRunning.get()) {
-			MainWindow unauthorizedWindow = new MainWindow();
+			MainWindow mainWindow = new MainWindow();
 			
 			try {
 				if (Objects.isNull(currentUser.get())) {
-					gui.addWindowAndWait(unauthorizedWindow);
-					currentUser.set(unauthorizedWindow.returnMember());
-					unauthorizedWindow.close();
+					gui.addWindowAndWait(mainWindow);
+					currentUser.set(mainWindow.returnMember());
+					mainWindow.close();
 				} else {
 					AuthWindow authorizedWindow = new AuthWindow();
+					MessageDialog.showMessageDialog(gui, "Last Login:", Helper.getHelper().readLastLogin(currentUser.get().getUsername()));
 					gui.addWindowAndWait(authorizedWindow);
+					
 				}
 			} catch (Exception e) {
 				throw new RuntimeException(e);
@@ -74,42 +77,24 @@ public class App {
 	}
 	
 	
-	private static void addBookApp() {
+	public static void addBookApp() {
 		String ISBN;
 		currentBook.set(new Book());
 		try {
 			boolean isAuthor = false;
-			BookAddWindow TitleWindow = new BookAddWindow(0);
-			Panel TitlePanel = new Panel();
-			Button exit = new Button("Enter", TitleWindow::close);
-			TextBox titleBox = new TextBox(new TerminalSize(30,1));
-			TitlePanel.setLayoutManager(new LinearLayout(Direction.VERTICAL));
-			TitlePanel.addComponent(titleBox);
-			TitlePanel.addComponent(exit);
-			((Panel) TitleWindow.getComponent()).addComponent(TitlePanel);
-			gui.addWindowAndWait(TitleWindow);
-			currentBook.get().setBooktitle(titleBox.getText());
-			
-			do { // separating author names by first name/last name
-				
-				System.out.println("Input author's first name");
-				String tempFirstName = s.nextLine();
-				
-				System.out.println("Input author's last name, or type 999 for no last name");
-				String tempLastName = s.nextLine();
-				if (tempLastName.equals("999")) {
-					tempLastName = null;
-				}
-				currentBook.get().addAuthorFirstNames(tempFirstName);
-				currentBook.get().addAuthorLastNames(tempLastName);
-				System.out.println(
-						"Press enter on empty line to continue adding authors, or type 999 to continue");
-				String continueInput = s.nextLine();
-				if (continueInput.equals("999")) {
-					isAuthor = true;
-				}
-			} while (!isAuthor); // allow for multiple authors to be entered
+			TitleWindow titleWindow = new TitleWindow();
+			gui.addWindowAndWait(titleWindow);
+			currentBook.get().setBooktitle(titleWindow.getTitle());
+			AuthorsWindow authorsWindow = new AuthorsWindow();
+			gui.addWindowAndWait(authorsWindow);
+			/*
+			testing
+			for (int i = 0; i < currentBook.get().getAuthorFirstNames().size(); i++) {
+				MessageDialog.showMessageDialog(gui, "Test", currentBook.get().getAuthorFirstNames().get(i) + " " + currentBook.get().getAuthorLastNames().get(i));
+			}
+			*/
 			boolean isISBN = false;
+			//TO DO: IMPLEMENT ISBN INPUT WINDOW
 			do {
 				System.out.println("Input ISBN without hyphens or spaces");
 				ISBN = s.nextLine();

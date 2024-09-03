@@ -46,7 +46,7 @@ public class Helper {
 	
 	/**
 	 * Authenticates a user by displaying a login window and validating the provided credentials.
-	 *
+	 * <p>
 	 * The method prompts the user to enter a username and password via a login window.
 	 * It then checks these credentials against the stored values in the database. If the
 	 * validation is successful, the method returns a Member object representing the logged-in user.
@@ -60,15 +60,16 @@ public class Helper {
 		String uname = login.getUsername();
 		String passhash = login.getPassword();
 		
-			ResultSet loginrs;
-			try (PreparedStatement loginstmt = con.prepareStatement("SELECT passhash FROM member WHERE uname = ?;")) {
-				loginstmt.setString(1, uname);
-				loginrs = loginstmt.executeQuery();
+		ResultSet loginrs;
+		try (PreparedStatement loginstmt = con.prepareStatement("SELECT passhash FROM member WHERE uname = ?;")) {
+			loginstmt.setString(1, uname);
+			loginrs = loginstmt.executeQuery();
 			
 			if (loginrs.next()) {
 				if (loginrs.getString("passhash").equals(passhash)) {
 					currentUser = new Member(uname, passhash);
 					login.close();
+					writeLoginTime();
 					return currentUser;
 				} else {
 					MessageDialog.showMessageDialog(gui, "Error", "Invalid username or password");
@@ -76,12 +77,12 @@ public class Helper {
 			} else {
 				MessageDialog.showMessageDialog(gui, "Error", "User not found");
 			}
-			} catch (Exception e) {
-				e.printStackTrace();
-				MessageDialog.showMessageDialog(gui, "Error", "Error connecting to database");
-				login.close();
-				return null;
-			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			MessageDialog.showMessageDialog(gui, "Error", "Error connecting to database");
+			login.close();
+			return null;
+		}
 		
 		return currentUser;
 	}
@@ -94,7 +95,7 @@ public class Helper {
 			loginstampstmt.setString(2, currentUser.getUsername());
 			loginstampstmt.executeUpdate();
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
 	}
 	
@@ -119,36 +120,12 @@ public class Helper {
 	
 	
 	public synchronized void signup() {
-	
-	}
-		/*
-		Helper.getHelper().clearConsole();
-		System.out.println("Enter Username:"); // same as login
-		String uname = s.nextLine();
-		Helper.getHelper().clearConsole();
-		System.out.println("Enter First Name:");
-		String fName = s.nextLine();
-		Helper.getHelper().clearConsole();
-		System.out.println("Enter Last Name:");
-		String sName = s.nextLine();
-		boolean passMatch = false;
-		String plainpass;
-		do {
-			Helper.getHelper().clearConsole();
-			System.out.println("Enter Password:");
-			plainpass = readPasswordtoString();
-			Helper.getHelper().clearConsole();
-			System.out.println("Reenter Password:");
-			if (readPasswordtoString().equals(plainpass)) {
-				passMatch = true;
-			} else {
-				System.out.println("Passwords do not match!");
-				Helper.getHelper().clearConsole();
-			}
-		} while (!passMatch);
-		Password password = new Password();
-		String passHash = password.makePass(plainpass);
-		plainpass = null;
+		SignupWindow signup = new SignupWindow();
+		gui.addWindowAndWait(signup);
+		String uname = signup.getUsername();
+		String fName = signup.getFirstname();
+		String sName = signup.getLastname();
+		String passHash = signup.getPassword();
 		try {
 			PreparedStatement signupstmt = con.prepareStatement(
 					"INSERT INTO member (uname, fname, sname, passhash) VALUES (?, ?, ?, ?);");
@@ -157,16 +134,13 @@ public class Helper {
 			signupstmt.setString(3, sName);
 			signupstmt.setString(4, passHash);
 			signupstmt.executeUpdate();
-			System.out.println("Signup complete, proceed to login.");
-			wait(500);
-			clearConsole();
+			MessageDialog.showMessageDialog(gui, "Success", "Proceed to login");
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
-		System.out.println("test");
 		wait(500);
 	}
-	*/
+	
 	
 	public String timeStamp() {
 		return ZonedDateTime.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("uuuu.MM.dd.HH.mm.ss"));

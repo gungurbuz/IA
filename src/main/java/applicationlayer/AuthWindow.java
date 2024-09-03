@@ -1,6 +1,7 @@
 package applicationlayer;
 
 import businesslayer.Helper;
+import businesslayer.Library;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
 import databaselayer.GUIConnector;
@@ -20,7 +21,7 @@ public class AuthWindow extends BasicWindow {
 		}));
 		Panel middlePanel = new Panel();
 		middlePanel.addComponent(new Button("Add Book", () -> {
-			//BookAddWindow should be displayed
+			App.addBookApp();
 			AuthWindow.this.close();
 		}));
 		Panel rightPanel = new Panel();
@@ -33,6 +34,8 @@ public class AuthWindow extends BasicWindow {
 		
 		
 		horizontalPanel.addComponent(rightPanel.withBorder(Borders.singleLineBevel()));
+		horizontalPanel.addComponent(middlePanel.withBorder(Borders.singleLineBevel()));
+		horizontalPanel.addComponent(leftPanel.withBorder(Borders.singleLineBevel()));
 		
 		// This ultimately links in the panels as the window content
 		setComponent(horizontalPanel);
