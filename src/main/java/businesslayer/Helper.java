@@ -22,7 +22,6 @@ public class Helper {
 	private static final WindowBasedTextGUI gui = GUIConnector.getTextGUI();
 	private static Member currentUser;
 	private static Helper helper;
-	private static final Password password = new Password();
 	
 	private Helper() {
 		try {
@@ -40,7 +39,7 @@ public class Helper {
 		return helper;
 	}
 	
-	public void logout() {
+	public synchronized void logout() {
 		currentUser = null;
 	}
 	
@@ -55,15 +54,17 @@ public class Helper {
 	 *
 	 * @return a Member object representing the logged-in user, or the existing user if login fails
 	 */
-	public Member login() {
+	public synchronized Member login() {
 		LoginWindow login = new LoginWindow();
 		gui.addWindowAndWait(login);
 		String uname = login.getUsername();
 		String passhash = login.getPassword();
 		try {
-			PreparedStatement loginstmt = con.prepareStatement("SELECT passhash FROM member WHERE uname = ?;");
-			loginstmt.setString(1, uname);
-			ResultSet loginrs = loginstmt.executeQuery();
+			ResultSet loginrs;
+			try (PreparedStatement loginstmt = con.prepareStatement("SELECT passhash FROM member WHERE uname = ?;")) {
+				loginstmt.setString(1, uname);
+				loginrs = loginstmt.executeQuery();
+			}
 			if (loginrs.next()) {
 				if (loginrs.getString("passhash").equals(passhash)) {
 					currentUser = new Member(uname, passhash);
@@ -113,7 +114,7 @@ public class Helper {
 	}
 	
 	
-	public void signup() {
+	public synchronized void signup() {
 	
 	}
 		/*

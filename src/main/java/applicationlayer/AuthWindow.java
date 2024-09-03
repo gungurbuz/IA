@@ -1,5 +1,6 @@
 package applicationlayer;
 
+import businesslayer.Helper;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
 import databaselayer.GUIConnector;
@@ -20,8 +21,9 @@ public class AuthWindow extends BasicWindow {
 			AuthWindow.this.close();
 		}));
 		Panel rightPanel = new Panel();
-		rightPanel.addComponent(new Button("Exit", () -> {
+		rightPanel.addComponent(new Button("Log out", () -> {
 			App.setCurrentUser(null);
+			Helper.getHelper().logout();
 			AuthWindow.this.close();
 		}));
 		
