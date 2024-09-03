@@ -12,6 +12,7 @@ import applicationlayer.App;
 import com.googlecode.lanterna.gui2.BasicWindow;
 import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
+import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
 import com.googlecode.lanterna.gui2.dialogs.TextInputDialog;
 import databaselayer.*;
 
@@ -44,12 +45,21 @@ public class Helper {
 	}
 	
 	
+	/**
+	 * Authenticates a user by displaying a login window and validating the provided credentials.
+	 *
+	 * The method prompts the user to enter a username and password via a login window.
+	 * It then checks these credentials against the stored values in the database. If the
+	 * validation is successful, the method returns a Member object representing the logged-in user.
+	 * If the credentials are incorrect or the user does not exist, appropriate error messages are displayed.
+	 *
+	 * @return a Member object representing the logged-in user, or the existing user if login fails
+	 */
 	public Member login() {
-		
-		System.out.println("Enter Password:");
-		String plainpass = readPasswordtoString();
-		String passhash = password.makePass(plainpass);
-		plainpass = null;
+		LoginWindow login = new LoginWindow();
+		gui.addWindowAndWait(login);
+		String uname = login.getUsername();
+		String passhash = login.getPassword();
 		try {
 			PreparedStatement loginstmt = con.prepareStatement("SELECT passhash FROM member WHERE uname = ?;");
 			loginstmt.setString(1, uname);
@@ -57,18 +67,18 @@ public class Helper {
 			if (loginrs.next()) {
 				if (loginrs.getString("passhash").equals(passhash)) {
 					currentUser = new Member(uname, passhash);
+					login.close();
 					return currentUser;
 				} else {
-					System.out.println("Invalid username or password.");
-					wait(500);
+					MessageDialog.showMessageDialog(gui, "Error", "Invalid username or password");
 				}
 			} else {
-				System.out.println("User not found.");
+				MessageDialog.showMessageDialog(gui, "Error", "User not found");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return null;
+		return currentUser;
 	}
 	
 	private void writeLoginTime() {
@@ -84,24 +94,29 @@ public class Helper {
 	}
 	
 	public String readLastLogin(String uname) {
+		String lastLogin = null;
 		try {
 			PreparedStatement loginreadstmt = con.prepareStatement("SELECT lastlogin FROM member WHERE uname = ?;");
 			loginreadstmt.setString(1, uname);
 			ResultSet loginreadrs = loginreadstmt.executeQuery();
 			if (loginreadrs.next() && loginreadrs.getObject("lastlogin") != null) {
-				return loginreadrs.getString("lastlogin");
+				lastLogin = loginreadrs.getString("lastlogin");
 				writeLoginTime();
 			} else {
-				return null;
 				writeLoginTime();
 			}
 			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		return lastLogin;
 	}
 	
+	
 	public void signup() {
+	
+	}
+		/*
 		Helper.getHelper().clearConsole();
 		System.out.println("Enter Username:"); // same as login
 		String uname = s.nextLine();
@@ -146,19 +161,10 @@ public class Helper {
 		System.out.println("test");
 		wait(500);
 	}
+	*/
 	
 	public String timeStamp() {
 		return ZonedDateTime.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("uuuu.MM.dd.HH.mm.ss"));
-	}
-	
-	private String readPasswordtoString() {
-		char[] passchars = terminal.readPassword();
-		return new String(passchars);
-	}
-	
-	public void clearConsole() {
-		System.out.print("\033[H\033[2J");
-		Helper.terminal.flush();
 	}
 	
 	public void wait(int ms) {
