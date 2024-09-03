@@ -45,7 +45,7 @@ public class Helper {
 	
 	
 	public Member login() {
-		//to be edited
+		
 		System.out.println("Enter Password:");
 		String plainpass = readPasswordtoString();
 		String passhash = password.makePass(plainpass);
