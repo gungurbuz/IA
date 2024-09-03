@@ -33,7 +33,7 @@ public class GUIConnector {
 	    }
     }
 
-    public static WindowBasedTextGUI getTextGUI() {
+    public static synchronized WindowBasedTextGUI getTextGUI() {
         if (gui == null) {
             gui = createWindowBasedTextGUI();
         }
@@ -49,7 +49,7 @@ public class GUIConnector {
             tempgui = new MultiWindowTextGUI(screen, new DefaultWindowManager(), new EmptySpace(TextColor.ANSI.CYAN));
             screen.startScreen();
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Failed to initialize Text GUI", e);
         }
         return tempgui;
     }

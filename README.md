@@ -49,13 +49,13 @@ This repository contains the code for my Computer Science Internal Assessment, w
 1. Clone the repository:
 
     ```sh
-    git clone <repository-url>
+    git clone -b mavenwithlanterna --single-branch https://github.com/gungurbuz/IA
     ```
 
 2. Navigate to the project directory:
 
     ```sh
-    cd library-catalogue-system
+    cd ia
     ```
 
 3. Compile the project using Maven:
