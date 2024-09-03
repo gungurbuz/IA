@@ -4,12 +4,15 @@ import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.*;
 import databaselayer.Password;
 
+import java.util.Arrays;
+
 public class LoginWindow extends BasicWindow {
 	Password passwordClass = new Password();
 	TextBox usernameBox;
 	TextBox passwordBox;
 	public LoginWindow() {
 		super("Login to member account");
+		setHints(Arrays.asList(Window.Hint.CENTERED));
 		Panel mainPanel = new Panel();
 		Panel usernamePanel = new Panel();
 		usernameBox = new TextBox(new TerminalSize(30, 1));

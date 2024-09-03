@@ -3,6 +3,9 @@ package applicationlayer;
 import businesslayer.Helper;
 import businesslayer.Member;
 import com.googlecode.lanterna.gui2.*;
+import databaselayer.GUIConnector;
+
+import java.util.Arrays;
 
 /**
  * MainWindow is the primary window for the Library Catalogue System application.
@@ -20,6 +23,7 @@ public class MainWindow extends BasicWindow{
     Member currentUser;
     public MainWindow() {
         super("Library Catalogue System");
+        setHints(Arrays.asList(Window.Hint.CENTERED));
         Panel horizontalPanel = new Panel();
         horizontalPanel.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
         Panel leftPanel = new Panel();
@@ -33,14 +37,14 @@ public class MainWindow extends BasicWindow{
         rightPanel.addComponent(new Button("Exit", () -> {
             App.isRunning.set(false);
             MainWindow.this.close();
+            GUIConnector.stopScreen();
         }));
-
-
-
-        horizontalPanel.addComponent(rightPanel.withBorder(Borders.singleLineBevel()));
-        horizontalPanel.addComponent(middlePanel.withBorder(Borders.singleLineBevel()));
+        
+        
         horizontalPanel.addComponent(leftPanel.withBorder(Borders.singleLineBevel()));
-
+        horizontalPanel.addComponent(middlePanel.withBorder(Borders.singleLineBevel()));
+        horizontalPanel.addComponent(rightPanel.withBorder(Borders.singleLineBevel()));
+        
         // This ultimately links in the panels as the window content
         setComponent(horizontalPanel);
     }
