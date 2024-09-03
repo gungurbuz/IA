@@ -16,13 +16,15 @@ import businesslayer.Book;
 import businesslayer.Library;
 import businesslayer.Member;
 
+import static databaselayer.GUIConnector.getTextGUI;
+
 public class App {
 	
 	private static final Scanner s = new Scanner(System.in);
 	
 	private static AtomicReference<Member> currentUser = new AtomicReference<Member>();
 	private static ThreadLocal<Book> currentBook = new ThreadLocal<Book>();
-	private static final WindowBasedTextGUI gui = GUIConnector.getTextGUI();
+	private static final WindowBasedTextGUI gui = getTextGUI();
 	public static final AtomicBoolean isRunning = new AtomicBoolean(false);
 	
 	public static synchronized void setCurrentUser(Member currentUser) {
