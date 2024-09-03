@@ -11,23 +11,21 @@ import java.util.HashMap;
 import java.util.Objects;
 
 import applicationlayer.App;
-import applicationlayer.AuthWindow;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.BasicWindow;
 import com.googlecode.lanterna.gui2.CheckBoxList;
 import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
-import com.googlecode.lanterna.gui2.dialogs.ActionListDialogBuilder;
 import databaselayer.DatabaseConnector;
 import databaselayer.GUIConnector;
 
 public class Library {
 	
 	private final Scanner s = new Scanner(System.in);
-	private Connection con;
-	private PreparedStatement getLastInsertIdStatement;
+	private final Connection con;
+	private final PreparedStatement getLastInsertIdStatement;
 	private static Library library;
 	private static final HashMap<Integer, Coordinate> libraryLocations = new HashMap<>();
-	private static WindowBasedTextGUI gui = GUIConnector.getTextGUI();
+	private static final WindowBasedTextGUI gui = GUIConnector.getTextGUI();
 	
 	public static HashMap<Integer, Coordinate> getLibraryLocations() {
 		return libraryLocations;
@@ -64,7 +62,7 @@ public class Library {
 			libraryLocations.put(25, new Coordinate(2, 6));
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
 	}
 	
@@ -88,7 +86,7 @@ public class Library {
 				Statement langstmt = con.createStatement();
 				ResultSet langstmtrs = langstmt.executeQuery("select * from language;");
 				TerminalSize size = new TerminalSize(20, 14);
-				CheckBoxList<String> langList = new CheckBoxList<String>(size);
+				CheckBoxList<String> langList = new CheckBoxList<>(size);
 				while (langstmtrs.next()) { // prints language list for user to choose
 					tempLang = langstmtrs.getString("languagename");
 					langNames.put(i, tempLang); // adds languages to hashmap to check against when making a choice

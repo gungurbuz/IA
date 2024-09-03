@@ -9,20 +9,18 @@ public class AuthorsWindow extends BookAddWindow{
 	ArrayList<TextBox> authorFirstNameBoxes = new ArrayList<>();
 	ArrayList<TextBox> authorLastNameBoxes = new ArrayList<>();
 	AuthorsWindow(){
-		super(10);
+		super(15);
 		Panel mainPanel = new Panel();
 		mainPanel.setLayoutManager(new LinearLayout(Direction.VERTICAL));
 		Panel buttonPanel = new Panel();
 		buttonPanel.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
-		Button addAuthor = new Button("Add Author", () -> {
-			mainPanel.addComponent(addAuthorLine());
-		});
+		Button addAuthor = new Button("Add Author", () -> mainPanel.addComponent(addAuthorLine()));
 		Button exit = new Button("Continue", () -> {
 			while (!authorFirstNameBoxes.isEmpty()) {
 				App.getCurrentBook().addAuthorFirstNames(authorFirstNameBoxes.removeFirst().getText());
 				App.getCurrentBook().addAuthorLastNames(authorLastNameBoxes.removeFirst().getText());
-				this.close();
 			}
+			this.close();
 		});
 		buttonPanel.addComponent(addAuthor);
 		buttonPanel.addComponent(exit);
