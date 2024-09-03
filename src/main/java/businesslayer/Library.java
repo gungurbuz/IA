@@ -11,15 +11,23 @@ import java.util.HashMap;
 import java.util.Objects;
 
 import applicationlayer.App;
+import applicationlayer.AuthWindow;
+import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.gui2.BasicWindow;
+import com.googlecode.lanterna.gui2.CheckBoxList;
+import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
+import com.googlecode.lanterna.gui2.dialogs.ActionListDialogBuilder;
 import databaselayer.DatabaseConnector;
+import databaselayer.GUIConnector;
 
 public class Library {
 	
-	private Scanner s = new Scanner(System.in);
+	private final Scanner s = new Scanner(System.in);
 	private Connection con;
 	private PreparedStatement getLastInsertIdStatement;
 	private static Library library;
-	private static HashMap<Integer, Coordinate> libraryLocations = new HashMap<>();
+	private static final HashMap<Integer, Coordinate> libraryLocations = new HashMap<>();
+	private static WindowBasedTextGUI gui = GUIConnector.getTextGUI();
 	
 	public static HashMap<Integer, Coordinate> getLibraryLocations() {
 		return libraryLocations;
@@ -72,24 +80,23 @@ public class Library {
 	}
 	
 	public ArrayList<Integer> languageSelect(HashMap<Integer, String> langNames) {
-		Helper.getHelper().wait(500);
-		String tempLang = "";
-		ArrayList<Integer> langIds = new ArrayList<Integer>(); // the language id(s) of the current book
-		Helper.getHelper().clearConsole();
-		System.out.println("Choose language from options below or enter 999 to add a new one");
+		String tempLang;
+		ArrayList<Integer> langIds = new ArrayList<>(); // the language id(s) of the current book
 		int i = 1;
 		try {
 			while (!App.getCurrentBook().isLang()) {
 				Statement langstmt = con.createStatement();
 				ResultSet langstmtrs = langstmt.executeQuery("select * from language;");
+				TerminalSize size = new TerminalSize(20, 14);
+				CheckBoxList<String> langList = new CheckBoxList<String>(size);
 				while (langstmtrs.next()) { // prints language list for user to choose
 					tempLang = langstmtrs.getString("languagename");
-					System.out.print(i + ". ");
-					System.out.println(tempLang);
 					langNames.put(i, tempLang); // adds languages to hashmap to check against when making a choice
+					langList.addItem(tempLang);
 					i = i + 1;
 				}
-				System.out.println("999. Add new language");
+				BasicWindow langListHolder = new BasicWindow("Choose languages from options below or select Add to add a new one");
+				langListHolder.setComponent(langList);
 				String langChoiceString = s.nextLine();
 				if (langChoiceString.equals(null)) {
 					System.out.println("Invalid input, please enter a number.");
@@ -119,10 +126,10 @@ public class Library {
 				do {
 					System.out.println("Do you want to add another language? (Y/N)");
 					String continueString = s.nextLine();
-					if (continueString.toUpperCase().equals("N")) {
+					if (continueString.equalsIgnoreCase("N")) {
 						App.getCurrentBook().setLang(true);
 						continueTest = true;
-					} else if (continueString.toUpperCase().equals("Y")) {
+					} else if (continueString.equalsIgnoreCase("Y")) {
 						continueTest = true;
 					} else {
 						System.out.println("Invalid input, try again.");
@@ -139,9 +146,8 @@ public class Library {
 	
 	public int publisherSelect(HashMap<Integer, String> publisherNames) {
 		Helper.getHelper().wait(500);
-		String tempPublisher = "";
+		String tempPublisher;
 		int tempPublisherId;
-		Helper.getHelper().clearConsole();
 		System.out.println("Choose publisher from options below or enter 999 to add a new one");
 		try {
 			Statement publisherstmt = con.createStatement();
@@ -195,7 +201,7 @@ public class Library {
 					"INSERT INTO book (bookname, isbn, genre, pubyear, idpublisher, locationx, locationy) VALUES (?, ?, ?, ?, ?, ?, ?);");
 			addBookStatement.setString(1, currentBook.getBooktitle());
 			addBookStatement.setString(2, currentBook.getISBN13());
-			if (currentBook.getGenre().equals("")) {
+			if (currentBook.getGenre().isEmpty()) {
 				addBookStatement.setString(3, null);
 			} else {
 				addBookStatement.setString(3, currentBook.getGenre());

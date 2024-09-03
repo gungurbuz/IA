@@ -2,19 +2,11 @@ package applicationlayer;
 
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.*;
-import com.googlecode.lanterna.gui2.dialogs.ActionListDialogBuilder;
-import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
-import com.googlecode.lanterna.screen.Screen;
-import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
-import com.googlecode.lanterna.terminal.Terminal;
-
-import java.io.IOException;
 
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.Scanner;
 
-import com.sun.tools.javac.Main;
 import databaselayer.GUIConnector;
 import org.apache.commons.validator.routines.ISBNValidator;
 
@@ -32,6 +24,10 @@ public class App {
 	private static final WindowBasedTextGUI gui = GUIConnector.getTextGUI();
 	public static boolean isRunning;
 	
+	public static void setCurrentUser(Member currentUser) {
+		App.currentUser = currentUser;
+	}
+	
 	public static Book getCurrentBook() {
 		return currentBook;
 	}
@@ -44,56 +40,34 @@ public class App {
 		App.currentBook = currentBook;
 	}
 	
+	/**
+	 * The main method serves as the entry point for the application.
+	 * It initializes the GUI and controls the main loop for the
+	 * application, managing the authorization state of the user.
+	 *
+	 * @param args Command line arguments passed to the application.
+	 */
 	public static void main(String[] args) {
 		Scanner scanner = new Scanner(System.in);
 		isRunning = true;
 		
 		while (isRunning) {
 			MainWindow unauthorizedWindow = new MainWindow();
+			
 			try {
 				if (Objects.isNull(currentUser)) {
-					gui.addWindow(unauthorizedWindow);
-					
-					case 3:
-						// PreparedStatement deletemembers = con.prepareStatement("DELETE FROM
-						// member;");
-						// deletemembers.executeUpdate();
-						System.out.println("no active tests");
-						Helper.getHelper().wait(500);
-						break;
-					case 999:
-						isRunning = false;
-						break;
-					default:
-						System.out.println("Invalid choice. Please try again.");
-						Helper.getHelper().wait(500);
-						Helper.getHelper().clearConsole();
+					gui.addWindowAndWait(unauthorizedWindow);
+					currentUser = unauthorizedWindow.returnMember();
+					unauthorizedWindow.close();
+				} else {
+					AuthWindow authorizedWindow = new AuthWindow();
+					gui.addWindowAndWait(authorizedWindow);
 				}
-			} else{
-				System.out.println("Select an option: 1. Logout 2. Add Book 999. Exit");
-				int choice = scanner.nextInt();
-				scanner.nextLine(); // Consume newline
-				switch (choice) {
-					case 1:
-						logout();
-						break;
-					case 2:
-						System.out.println("testing book adder");
-						addBookApp();
-						break;
-					case 999:
-						isRunning = false;
-						break;
-					default:
-						System.out.println("Invalid choice. Please try again.");
-				}
+			} catch (Exception e) {
+				throw new RuntimeException(e);
 			}
-		} catch(Exception e){
-			System.out.println("An error occurred: ");
-			e.printStackTrace();
-			scanner.nextLine(); // Consume newline if invalid input
 		}
-		scanner.close();
+		
 	}
 	
 	
@@ -102,14 +76,22 @@ public class App {
 		currentBook = new Book();
 		try {
 			boolean isAuthor = false;
-			Helper.getHelper().clearConsole();
-			System.out.println("Input book title:");
-			currentBook.setBooktitle(s.nextLine());
+			BookAddWindow TitleWindow = new BookAddWindow(0);
+			Panel TitlePanel = new Panel();
+			Button exit = new Button("Enter", TitleWindow::close);
+			TextBox titleBox = new TextBox(new TerminalSize(30,1));
+			TitlePanel.setLayoutManager(new LinearLayout(Direction.VERTICAL));
+			TitlePanel.addComponent(titleBox);
+			TitlePanel.addComponent(exit);
+			((Panel) TitleWindow.getComponent()).addComponent(TitlePanel);
+			gui.addWindowAndWait(TitleWindow);
+			currentBook.setBooktitle(titleBox.getText());
+			
 			do { // separating author names by first name/last name
-				Helper.getHelper().clearConsole();
+				
 				System.out.println("Input author's first name");
 				String tempFirstName = s.nextLine();
-				Helper.getHelper().clearConsole();
+				
 				System.out.println("Input author's last name, or type 999 for no last name");
 				String tempLastName = s.nextLine();
 				if (tempLastName.equals("999")) {
@@ -117,7 +99,6 @@ public class App {
 				}
 				currentBook.addAuthorFirstNames(tempFirstName);
 				currentBook.addAuthorLastNames(tempLastName);
-				Helper.getHelper().clearConsole();
 				System.out.println(
 						"Press enter on empty line to continue adding authors, or type 999 to continue");
 				String continueInput = s.nextLine();
@@ -125,7 +106,6 @@ public class App {
 					isAuthor = true;
 				}
 			} while (!isAuthor); // allow for multiple authors to be entered
-			Helper.getHelper().clearConsole();
 			boolean isISBN = false;
 			do {
 				System.out.println("Input ISBN without hyphens or spaces");
@@ -148,13 +128,11 @@ public class App {
 			do {
 				currentBook.setLangIds(businesslayer.Library.getLibrary().languageSelect(languageNames));
 			} while (!currentBook.isLang());
-			Helper.getHelper().clearConsole();
 			System.out.println("[Optional]Input book genre (press enter to leave empty)");
 			String tempGenre = s.nextLine();
 			if (Objects.nonNull(tempGenre)) {
 				currentBook.setGenre(tempGenre);
 			}
-			Helper.getHelper().clearConsole();
 			System.out.println("Input year of publishing in YYYY format");
 			currentBook.setPubYear(s.nextLine());
 			HashMap<Integer, String> publishers = new HashMap<Integer, String>();
@@ -200,9 +178,7 @@ public class App {
 		Helper.getHelper().logout();
 		System.out.println("Logged out successfully.");
 		Helper.getHelper().wait(500);
-		Helper.getHelper().clearConsole();
 		
 	}
 	
-}
 }

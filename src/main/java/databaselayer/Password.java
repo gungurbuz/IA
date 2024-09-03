@@ -5,6 +5,12 @@ import java.security.MessageDigest;
 
 public class Password {
 
+    /**
+     * Generates an encrypted version of the plain text password utilizing SHA-256.
+     *
+     * @param plainpass the plain text password to be encrypted
+     * @return the encrypted password in hexadecimal format
+     */
     public String makePass(String plainpass) {
         return makePassPrivate(plainpass);
     }
