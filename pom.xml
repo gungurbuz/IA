@@ -6,7 +6,7 @@
 
 	<groupId>com.github.gungurbuz</groupId>
 	<artifactId>ia</artifactId>
-	<version>0.0.1-LANTERNATEST</version>
+	<version>0.0.1-SNAPSHOT</version>
 
 	<properties>
 		<maven.compiler.source>21</maven.compiler.source>
@@ -33,5 +33,19 @@
 		</dependency>
 
 	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.4.1</version>
+				<configuration>
+					<outputDirectory>C:\Users\Güney\Documents\CSHL\maventest\ia\releases</outputDirectory>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
 
 </project>
