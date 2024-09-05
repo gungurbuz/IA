@@ -6,7 +6,7 @@ import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
 import databaselayer.GUIConnector;
 import databaselayer.Password;
 
-import java.util.Arrays;
+import java.util.List;
 
 public class SignupWindow extends BasicWindow {
 	
@@ -20,7 +20,7 @@ public class SignupWindow extends BasicWindow {
 	
 	SignupWindow() {
 		super("Sign up for member account");
-		setHints(Arrays.asList(Window.Hint.CENTERED));
+		setHints(List.of(Hint.CENTERED));
 		Panel mainPanel = new Panel();
 		Panel usernamePanel = new Panel();
 		usernameBox = new TextBox(new TerminalSize(30, 1));
@@ -50,8 +50,8 @@ public class SignupWindow extends BasicWindow {
 		exitPanel.addComponent(exit);
 		mainPanel.setLayoutManager(new LinearLayout(Direction.VERTICAL));
 		mainPanel.addComponent(usernamePanel.withBorder(Borders.singleLine("Username")));
-		mainPanel.addComponent(firstnamePanel.withBorder(Borders.singleLine("Firstname")));
-		mainPanel.addComponent(lastnamePanel.withBorder(Borders.singleLine("Lastname")));
+		mainPanel.addComponent(firstnamePanel.withBorder(Borders.singleLine("First name")));
+		mainPanel.addComponent(lastnamePanel.withBorder(Borders.singleLine("Last name")));
 		mainPanel.addComponent(passwordPanel.withBorder(Borders.singleLine("Password")));
 		mainPanel.addComponent(confirmPasswordPanel.withBorder(Borders.singleLine("Confirm Password")));
 		mainPanel.addComponent(exitPanel.withBorder(Borders.singleLine()));

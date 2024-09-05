@@ -2,10 +2,13 @@ package applicationlayer;
 
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.*;
+import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
+import databaselayer.GUIConnector;
 
 import java.util.ArrayList;
 
 public class AuthorsWindow extends BookAddWindow{
+	WindowBasedTextGUI gui = GUIConnector.getTextGUI();
 	ArrayList<TextBox> authorFirstNameBoxes = new ArrayList<>();
 	ArrayList<TextBox> authorLastNameBoxes = new ArrayList<>();
 	AuthorsWindow(){
@@ -16,7 +19,13 @@ public class AuthorsWindow extends BookAddWindow{
 		buttonPanel.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
 		Button addAuthor = new Button("Add Author", () -> mainPanel.addComponent(addAuthorLine()));
 		Button exit = new Button("Continue", () -> {
+			if(authorFirstNameBoxes.getFirst().getText().isEmpty()){
+			
+			}
 			while (!authorFirstNameBoxes.isEmpty()) {
+				if(authorFirstNameBoxes.getFirst().getText().isEmpty()){
+					MessageDialog.showMessageDialog(gui, "Error", "Please input a first name");
+				}
 				App.getCurrentBook().addAuthorFirstNames(authorFirstNameBoxes.removeFirst().getText());
 				App.getCurrentBook().addAuthorLastNames(authorLastNameBoxes.removeFirst().getText());
 			}
