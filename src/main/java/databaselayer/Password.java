@@ -1,10 +1,15 @@
 package databaselayer;
 
+import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
+import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
+
 import java.security.NoSuchAlgorithmException;
 import java.security.MessageDigest;
 
 public class Password {
-
+    
+    private final WindowBasedTextGUI gui = GUIConnector.getTextGUI();
+    
     /**
      * Generates an encrypted version of the plain text password utilizing SHA-256.
      *
@@ -23,7 +28,7 @@ public class Password {
             MessageDigest m = MessageDigest.getInstance("SHA-256");
             password = plainpass;
 
-            /* Add plain-text password bytes to digest using MD5 update() method. */
+            /* Add plain-text password bytes to digest using SHA-256 update() method. */
             m.update(password.getBytes());
 
             /* Convert the hash value into bytes */
@@ -41,7 +46,7 @@ public class Password {
             /* Complete hashed password in hexadecimal format */
             encryptedpassword = s.toString();
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            MessageDialog.showMessageDialog(gui, "Error", "Error during password encryption:" + e.getMessage());
         }
         return encryptedpassword;
     }

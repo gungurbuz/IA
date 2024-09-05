@@ -7,9 +7,9 @@ import databaselayer.Password;
 import java.util.List;
 
 public class LoginWindow extends BasicWindow {
-	Password passwordClass = new Password();
-	TextBox usernameBox;
-	TextBox passwordBox;
+	private Password passwordClass = new Password();
+	private TextBox usernameBox;
+	private TextBox passwordBox;
 	public LoginWindow() {
 		super("Login to member account");
 		setHints(List.of(Hint.CENTERED));
