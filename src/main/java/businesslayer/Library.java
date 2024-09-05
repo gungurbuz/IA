@@ -15,6 +15,7 @@ import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.BasicWindow;
 import com.googlecode.lanterna.gui2.CheckBoxList;
 import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
+import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
 import databaselayer.DatabaseConnector;
 import databaselayer.GUIConnector;
 
@@ -186,8 +187,8 @@ public class Library {
 				}
 			}
 		} catch (Exception e) {
-			System.out.println("Invalid input, try again.");
-			e.printStackTrace();
+			MessageDialog.showMessageDialog(gui, "Error", "Invalid input:" + e.getMessage());
+			throw new RuntimeException(e);
 		}
 		System.out.println("error");
 		return 0;
@@ -235,7 +236,7 @@ public class Library {
 				addLanguagesToBridgeStatement.executeUpdate();
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
 	}
 	
