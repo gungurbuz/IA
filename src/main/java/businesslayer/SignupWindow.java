@@ -40,13 +40,11 @@ public class SignupWindow extends BasicWindow {
 		confirmPasswordBox.setMask('*');
 		confirmPasswordPanel.addComponent(confirmPasswordBox);
 		Panel exitPanel = new Panel();
-		Button exit = new Button("Enter", new Runnable() {
-			public void run() {
-				if (passwordBox.getText().equals(confirmPasswordBox.getText())) {
-					SignupWindow.this.close();
-				} else {
-					MessageDialog.showMessageDialog(gui, "Error", "Passwords do not match");
-				}
+		Button exit = new Button("Enter", () -> {
+			if (passwordBox.getText().equals(confirmPasswordBox.getText())) {
+				SignupWindow.this.close();
+			} else {
+				MessageDialog.showMessageDialog(gui, "Error", "Passwords do not match");
 			}
 		});
 		exitPanel.addComponent(exit);
