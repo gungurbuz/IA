@@ -1,7 +1,14 @@
 package applicationlayer;
 
 import com.googlecode.lanterna.TerminalSize;
-import com.googlecode.lanterna.gui2.*;
+import com.googlecode.lanterna.gui2.Borders;
+import com.googlecode.lanterna.gui2.Button;
+import com.googlecode.lanterna.gui2.Component;
+import com.googlecode.lanterna.gui2.Direction;
+import com.googlecode.lanterna.gui2.LinearLayout;
+import com.googlecode.lanterna.gui2.Panel;
+import com.googlecode.lanterna.gui2.TextBox;
+import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
 import databaselayer.GUIConnector;
 
