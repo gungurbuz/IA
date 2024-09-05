@@ -79,12 +79,15 @@ public class App {
 	public static void addBookApp() {
 		String ISBN;
 		currentBook.set(new Book());
+		Window currentWindow = null;
 		try {
 			boolean isAuthor = false;
 			TitleWindow titleWindow = new TitleWindow();
+			currentWindow = titleWindow;
 			gui.addWindowAndWait(titleWindow);
 			currentBook.get().setBooktitle(titleWindow.getTitle());
 			AuthorsWindow authorsWindow = new AuthorsWindow();
+			currentWindow = authorsWindow;
 			gui.addWindowAndWait(authorsWindow);
 			/*
 			testing
@@ -92,8 +95,9 @@ public class App {
 				MessageDialog.showMessageDialog(gui, "Test", currentBook.get().getAuthorFirstNames().get(i) + " " + currentBook.get().getAuthorLastNames().get(i));
 			}
 			*/
-			boolean isISBN = false;
-			//TO DO: IMPLEMENT ISBN INPUT WINDOW
+			/*boolean isISBN = false;
+			
+			TO DO: IMPLEMENT ISBN INPUT WINDOW
 			do {
 				System.out.println("Input ISBN without hyphens or spaces");
 				ISBN = s.nextLine();
@@ -130,25 +134,32 @@ public class App {
 			System.out.println("Select location");
 			int locationChoice = s.nextInt();
 			currentBook.get().setLocation(Library.getLibraryLocations().get(locationChoice));
-			// addBook(); to do
-			// System.out.println(booktitle); // debugging stuff
-			// for (int i = 0; i < authorFirstNames.size(); i++) {
-			// System.out.println(authorFirstNames.get(i));
-			// System.out.println(authorLastNames.get(i));
-			// }
-			// System.out.println(ISBN13);
-			// for (String i : languageNames.values()) {
-			// System.out.println(i);
-			// }
-			// try {
-			// Statement langstmt = con.createStatement();
-			// ResultSet langstmtrs = langstmt.executeQuery("select * from language;");
-			// System.out.println(langstmtrs.getString("languagename"));
-			// } catch (Exception e) {
-			// e.printStackTrace();
-			// }
+			 addBook(); to do
+			 System.out.println(booktitle); // debugging stuff
+			 for (int i = 0; i < authorFirstNames.size(); i++) {
+			 System.out.println(authorFirstNames.get(i));
+			 System.out.println(authorLastNames.get(i));
+			 }
+			 System.out.println(ISBN13);
+			 for (String i : languageNames.values()) {
+			 System.out.println(i);
+			 }
+			 try {
+			 Statement langstmt = con.createStatement();
+			 ResultSet langstmtrs = langstmt.executeQuery("select * from language;");
+			 System.out.println(langstmtrs.getString("languagename"));
+			 } catch (Exception e) {
+			 e.printStackTrace();
+			 }
+			*/
 		} catch (Exception e) {
-			throw new RuntimeException(e);
+			currentBook.remove();
+			Window errorSource = currentWindow;
+			if (((Object) currentWindow) != null) {
+				currentWindow.close();
+			}
+			MessageDialog.showMessageDialog(gui, "Error", "An error occurred:" + errorSource.getClass().getName());
+			
 		}
 		Library.getLibrary().addBook(currentBook.get());
 	}

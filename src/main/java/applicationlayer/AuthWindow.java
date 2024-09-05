@@ -16,13 +16,9 @@ public class AuthWindow extends BasicWindow {
 		Panel leftPanel = new Panel();
 		leftPanel.addComponent(new Button("Search Book", () -> {
 			MessageDialog.showMessageDialog(GUIConnector.getTextGUI(), "Error", "Not implemented yet");
-			AuthWindow.this.close();
 		}));
 		Panel middlePanel = new Panel();
-		middlePanel.addComponent(new Button("Add Book", () -> {
-			App.addBookApp();
-			AuthWindow.this.close();
-		}));
+		middlePanel.addComponent(new Button("Add Book", App::addBookApp));
 		Panel rightPanel = new Panel();
 		rightPanel.addComponent(new Button("Log out", () -> {
 			App.setCurrentUser(null);
