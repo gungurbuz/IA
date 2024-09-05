@@ -73,8 +73,7 @@ public class Helper {
 				MessageDialog.showMessageDialog(gui, "Error", "User not found");
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
-			MessageDialog.showMessageDialog(gui, "Error", "Error connecting to database");
+			MessageDialog.showMessageDialog(gui, "Error", "Error connecting to database:" + e.getMessage());
 			login.close();
 			return null;
 		}
