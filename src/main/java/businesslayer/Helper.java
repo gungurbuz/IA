@@ -9,7 +9,8 @@ import java.time.format.DateTimeFormatter;
 import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
 
-import databaselayer.*;
+import databaselayer.DatabaseConnector;
+import databaselayer.GUIConnector;
 
 public class Helper {
 	

@@ -1,7 +1,6 @@
 package applicationlayer;
 
 import businesslayer.Helper;
-import com.googlecode.lanterna.gui2.*;
 
 import java.util.HashMap;
 import java.util.Objects;
@@ -9,6 +8,8 @@ import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
+import com.googlecode.lanterna.gui2.Window;
+import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
 import org.apache.commons.validator.routines.ISBNValidator;
 

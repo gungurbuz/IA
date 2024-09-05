@@ -1,15 +1,14 @@
 package databaselayer;
 
-import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
-import com.googlecode.lanterna.gui2.*;
+import com.googlecode.lanterna.gui2.DefaultWindowManager;
+import com.googlecode.lanterna.gui2.EmptySpace;
+import com.googlecode.lanterna.gui2.MultiWindowTextGUI;
+import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.Terminal;
-import com.googlecode.lanterna.terminal.swing.SwingTerminal;
-import com.googlecode.lanterna.terminal.swing.SwingTerminalFrame;
-import com.googlecode.lanterna.terminal.swing.TerminalScrollController;
 
 
 import java.io.IOException;
@@ -21,8 +20,8 @@ import java.io.IOException;
  * of WindowBasedTextGUI.
  */
 public class GUIConnector {
-    private static Terminal terminal;
-    private static Screen screen;
+	
+	private static Screen screen;
     private static WindowBasedTextGUI gui;
     
     public static void stopScreen(){
@@ -42,10 +41,10 @@ public class GUIConnector {
     }
 
     private static WindowBasedTextGUI createWindowBasedTextGUI() {
-        WindowBasedTextGUI tempgui = null;
+        WindowBasedTextGUI tempgui;
         try {
-            terminal = new DefaultTerminalFactory().createTerminal();;
-            screen = new TerminalScreen(terminal);
+	        Terminal terminal = new DefaultTerminalFactory().createTerminal();
+	        screen = new TerminalScreen(terminal);
             tempgui = new MultiWindowTextGUI(screen, new DefaultWindowManager(), new EmptySpace(TextColor.ANSI.CYAN));
             screen.startScreen();
         } catch (IOException e) {
