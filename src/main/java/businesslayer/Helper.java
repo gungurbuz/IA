@@ -6,169 +6,154 @@ import java.sql.ResultSet;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Scanner;
 
-import databaselayer.*;
-import java.io.Console;
+import applicationlayer.App;
+import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
+import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
+
+import databaselayer.DatabaseConnector;
+import databaselayer.GUIConnector;
 
 public class Helper {
-
-    private static Scanner s = new Scanner(System.in);
-    private static Connection con;
-    private static final Console cons = ConsoleConnector.getConsole();
-    private static Member currentUser;
-    private static Helper helper;
-
-    private Helper() {
-        try {
-            con = DatabaseConnector.getConnection(); // get connection object created in database layer
-            // cons = ConsoleConnector.getConsole();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static Helper getHelper() {
-        if (helper == null) {
-            helper = new Helper();
-        }
-        return helper;
-    }
-
-    public void logout() {
-        currentUser = null;
-    }
-
-    public Member login() {
-        clearConsole();
-        return loginPrivate();
-    }
-
-    private Member loginPrivate() {
-        Password password = new Password(); //move outside of method
-        System.out.println("Enter Username:");
-        String uname = s.nextLine();
-        System.out.println("Enter Password:");
-        String plainpass = readPasswordtoString();
-        String passhash = password.makePass(plainpass);
-        plainpass = null;
-        try {
-            PreparedStatement loginstmt = con.prepareStatement("SELECT passhash FROM member WHERE uname = ?;");
-            loginstmt.setString(1, uname);
-            ResultSet loginrs = loginstmt.executeQuery();
-            if (loginrs.next()) {
-                if (loginrs.getString("passhash").equals(passhash)) {
-                    currentUser = new Member(uname, passhash);
-                    return currentUser;
-                } else {
-                    System.out.println("Invalid username or password.");
-                    wait(500);
-                }
-            } else {
-                System.out.println("User not found.");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    private void writeLoginTime() {
-        try {
-            PreparedStatement loginstampstmt = con.prepareStatement(
-                    "UPDATE member SET lastlogin = ? WHERE uname = ?");
-            loginstampstmt.setString(1, timeStamp());
-            loginstampstmt.setString(2, currentUser.getUsername());
-            loginstampstmt.executeUpdate();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void readLastLogin(String uname) {
-        try {
-            PreparedStatement loginreadstmt = con.prepareStatement("SELECT lastlogin FROM member WHERE uname = ?;");
-            loginreadstmt.setString(1, uname);
-            ResultSet loginreadrs = loginreadstmt.executeQuery();
-            if (loginreadrs.next() && loginreadrs.getObject("lastlogin") != null) {
-                System.out.println("Last seen: " + (loginreadrs.getString("lastlogin")));
-                writeLoginTime();
-            } else {
-                System.out.println("First login, welcome!");
-                writeLoginTime();
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void signup() {
-        Helper.getHelper().clearConsole();
-        System.out.println("Enter Username:"); // same as login
-        String uname = s.nextLine();
-        Helper.getHelper().clearConsole();
-        System.out.println("Enter First Name:");
-        String fName = s.nextLine();
-        Helper.getHelper().clearConsole();
-        System.out.println("Enter Last Name:");
-        String sName = s.nextLine();
-        boolean passMatch = false;
-        String plainpass;
-        do {
-            Helper.getHelper().clearConsole();
-            System.out.println("Enter Password:");
-            plainpass = readPasswordtoString();
-            Helper.getHelper().clearConsole();
-            System.out.println("Reenter Password:");
-            if (readPasswordtoString().equals(plainpass)) {
-                passMatch = true;
-            } else {
-                System.out.println("Passwords do not match!");
-                Helper.getHelper().clearConsole();
-            }
-        } while (!passMatch);
-        Password password = new Password();
-        String passHash = password.makePass(plainpass);
-        plainpass = null;
-        try {
-            PreparedStatement signupstmt = con.prepareStatement(
-                    "INSERT INTO member (uname, fname, sname, passhash) VALUES (?, ?, ?, ?);");
-            signupstmt.setString(1, uname);
-            signupstmt.setString(2, fName);
-            signupstmt.setString(3, sName);
-            signupstmt.setString(4, passHash);
-            signupstmt.executeUpdate();
-            System.out.println("Signup complete, proceed to login.");
-            wait(500);
-            clearConsole();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        System.out.println("test");
-        wait(500);
-    }
-
-    public String timeStamp() {
-        return ZonedDateTime.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("uuuu.MM.dd.HH.mm.ss"));
-    }
-
-    private String readPasswordtoString() {
-        char[] passchars = cons.readPassword();
-        return new String(passchars);
-    }
-
-    public void clearConsole() {
-        System.out.print("\033[H\033[2J");
-        Helper.cons.flush();
-    }
-
-    public void wait(int ms) {
-        try {
-            Thread.sleep(ms);
-        } catch (InterruptedException ex) {
-            Thread.currentThread().interrupt();
-        }
-    }
-
+	
+	private static Connection con;
+	private static final WindowBasedTextGUI gui = GUIConnector.getTextGUI();
+	private static Member currentUser;
+	private static Helper helper;
+	
+	private Helper() {
+		try {
+			con = DatabaseConnector.getConnection(); // get connection object created in database layer
+			// cons = TerminalConnector.getConsole();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	public static Helper getHelper() {
+		if (helper == null) {
+			helper = new Helper();
+		}
+		return helper;
+	}
+	
+	public synchronized void logout() {
+		currentUser = null;
+	}
+	
+	
+	/**
+	 * Authenticates a user by displaying a login window and validating the provided credentials.
+	 * <p>
+	 * The method prompts the user to enter a username and password via a login window.
+	 * It then checks these credentials against the stored values in the database. If the
+	 * validation is successful, the method returns a Member object representing the logged-in user.
+	 * If the credentials are incorrect or the user does not exist, appropriate error messages are displayed.
+	 */
+	
+	
+	public synchronized void login() {
+		LoginWindow login = new LoginWindow();
+		gui.addWindowAndWait(login);
+		
+		if (login.isComplete()) {
+			
+			String username = login.getUsername();
+			String passhash = login.getPassword();
+			
+			ResultSet loginResultSet;
+			try (PreparedStatement loginStatement = con.prepareStatement("SELECT passhash FROM member WHERE uname = ?;")) {
+				loginStatement.setString(1, username);
+				loginResultSet = loginStatement.executeQuery();
+				
+				if (loginResultSet.next()) {
+					if (loginResultSet.getString("passhash").equals(passhash)) {
+						currentUser = new Member(username, passhash);
+						login.close();
+						writeLoginTime();
+						App.setCurrentUser(currentUser);
+					} else {
+						MessageDialog.showMessageDialog(gui, "Error", "Invalid username or password");
+					}
+				} else {
+					MessageDialog.showMessageDialog(gui, "Error", "User not found");
+				}
+			} catch (Exception e) {
+				MessageDialog.showMessageDialog(gui, "Error", "Error connecting to database:" + e.getMessage());
+				login.close();
+			}
+			
+			
+		}
+	}
+	
+	private void writeLoginTime() {
+		try {
+			PreparedStatement loginTimeStampStatement = con.prepareStatement(
+					"UPDATE member SET lastlogin = ? WHERE uname = ?");
+			loginTimeStampStatement.setString(1, timeStamp());
+			loginTimeStampStatement.setString(2, currentUser.getUsername());
+			loginTimeStampStatement.executeUpdate();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	public String readLastLogin(String uname) {
+		String lastLogin = null;
+		try {
+			PreparedStatement loginReadStatement = con.prepareStatement("SELECT lastlogin FROM member WHERE uname = ?;");
+			loginReadStatement.setString(1, uname);
+			ResultSet loginReadResultSet = loginReadStatement.executeQuery();
+			if (loginReadResultSet.next() && loginReadResultSet.getObject("lastlogin") != null) {
+				lastLogin = loginReadResultSet.getString("lastlogin");
+				writeLoginTime();
+			} else {
+				writeLoginTime();
+			}
+			
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		return lastLogin;
+	}
+	
+	
+	public synchronized void signup() {
+		SignupWindow signup = new SignupWindow();
+		gui.addWindowAndWait(signup);
+		if (signup.isComplete()) {
+			String uname = signup.getUsername();
+			String firstName = signup.getFirstname();
+			String lastName = signup.getLastname();
+			String passhash = signup.getPassword();
+			try {
+				PreparedStatement signupStatement = con.prepareStatement(
+						"INSERT INTO member (uname, fname, sname, passhash) VALUES (?, ?, ?, ?);");
+				signupStatement.setString(1, uname);
+				signupStatement.setString(2, firstName);
+				signupStatement.setString(3, lastName);
+				signupStatement.setString(4, passhash);
+				signupStatement.executeUpdate();
+				MessageDialog.showMessageDialog(gui, "Success", "Proceed to login");
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+			wait(500);
+		}
+	}
+	
+	
+	public String timeStamp() {
+		return ZonedDateTime.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("uuuu.MM.dd.HH.mm.ss"));
+	}
+	
+	public void wait(int ms) {
+		try {
+			Thread.sleep(ms);
+		} catch (InterruptedException ex) {
+			Thread.currentThread().interrupt();
+		}
+	}
+	
 }
