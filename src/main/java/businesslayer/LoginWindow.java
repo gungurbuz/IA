@@ -18,6 +18,7 @@ public class LoginWindow extends BasicWindow {
 	private final Password passwordClass = new Password();
 	private final TextBox usernameBox;
 	private final TextBox passwordBox;
+	private boolean isComplete = false;
 	
 	public LoginWindow() {
 		super("Login to member account");
@@ -31,8 +32,17 @@ public class LoginWindow extends BasicWindow {
 		passwordBox.setMask('*');
 		passwordPanel.addComponent(passwordBox);
 		Panel buttonPanel = new Panel();
-		ColoredButton exit = new ColoredButton("Exit", LoginWindow.this::close, TextColor.ANSI.RED);
-		Button enter = new Button("Enter", LoginWindow.this::close);
+		Panel exitPanel = new Panel();
+		Button exit = new Button("Exit", LoginWindow.this::close);
+		exitPanel.setFillColorOverride(TextColor.ANSI.RED);
+		exitPanel.addComponent(exit);
+		Panel enterPanel = new Panel();
+		Button enter = new Button("Enter", () -> {
+			isComplete = true;
+			LoginWindow.this.close();
+		});
+		enterPanel.setFillColorOverride(TextColor.ANSI.GREEN);
+		enterPanel.addComponent(enter);
 		buttonPanel.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
 		buttonPanel.addComponent(exit);
 		buttonPanel.addComponent(enter);
@@ -50,6 +60,10 @@ public class LoginWindow extends BasicWindow {
 	
 	public String getPassword() {
 		return passwordClass.makePass(passwordBox.getText());
+	}
+	
+	public boolean isComplete(){
+		return isComplete;
 	}
 	
 }

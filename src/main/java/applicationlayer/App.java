@@ -60,7 +60,6 @@ public class App {
 			try {
 				if (Objects.isNull(currentUser.get())) {
 					gui.addWindowAndWait(mainWindow);
-					currentUser.set(mainWindow.returnMember());
 					mainWindow.close();
 				} else {
 					AuthWindow authorizedWindow = new AuthWindow();

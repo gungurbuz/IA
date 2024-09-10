@@ -6,6 +6,8 @@ import java.sql.ResultSet;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+
+import applicationlayer.App;
 import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
 
@@ -48,47 +50,51 @@ public class Helper {
 	 * validation is successful, the method returns a Member object representing the logged-in user.
 	 * If the credentials are incorrect or the user does not exist, appropriate error messages are displayed.
 	 *
-	 * @return a Member object representing the logged-in user, or the existing user if login fails
 	 */
-	public synchronized Member login() {
+	
+	
+	public synchronized void login() {
 		LoginWindow login = new LoginWindow();
 		gui.addWindowAndWait(login);
-		String uname = login.getUsername();
-		String passhash = login.getPassword();
 		
-		ResultSet loginrs;
-		try (PreparedStatement loginstmt = con.prepareStatement("SELECT passhash FROM member WHERE uname = ?;")) {
-			loginstmt.setString(1, uname);
-			loginrs = loginstmt.executeQuery();
+		if (login.isComplete()) {
 			
-			if (loginrs.next()) {
-				if (loginrs.getString("passhash").equals(passhash)) {
-					currentUser = new Member(uname, passhash);
-					login.close();
-					writeLoginTime();
-					return currentUser;
+			String username = login.getUsername();
+			String passhash = login.getPassword();
+			
+			ResultSet loginResultSet;
+			try (PreparedStatement loginStatement = con.prepareStatement("SELECT passhash FROM member WHERE uname = ?;")) {
+				loginStatement.setString(1, username);
+				loginResultSet = loginStatement.executeQuery();
+				
+				if (loginResultSet.next()) {
+					if (loginResultSet.getString("passhash").equals(passhash)) {
+						currentUser = new Member(username, passhash);
+						login.close();
+						writeLoginTime();
+						App.setCurrentUser(currentUser);
+					} else {
+						MessageDialog.showMessageDialog(gui, "Error", "Invalid username or password");
+					}
 				} else {
-					MessageDialog.showMessageDialog(gui, "Error", "Invalid username or password");
+					MessageDialog.showMessageDialog(gui, "Error", "User not found");
 				}
-			} else {
-				MessageDialog.showMessageDialog(gui, "Error", "User not found");
+			} catch (Exception e) {
+				MessageDialog.showMessageDialog(gui, "Error", "Error connecting to database:" + e.getMessage());
+				login.close();
 			}
-		} catch (Exception e) {
-			MessageDialog.showMessageDialog(gui, "Error", "Error connecting to database:" + e.getMessage());
-			login.close();
-			return null;
+			
+			
 		}
-		
-		return currentUser;
 	}
 	
 	private void writeLoginTime() {
 		try {
-			PreparedStatement loginstampstmt = con.prepareStatement(
+			PreparedStatement loginTimeStampStatement = con.prepareStatement(
 					"UPDATE member SET lastlogin = ? WHERE uname = ?");
-			loginstampstmt.setString(1, timeStamp());
-			loginstampstmt.setString(2, currentUser.getUsername());
-			loginstampstmt.executeUpdate();
+			loginTimeStampStatement.setString(1, timeStamp());
+			loginTimeStampStatement.setString(2, currentUser.getUsername());
+			loginTimeStampStatement.executeUpdate();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -97,11 +103,11 @@ public class Helper {
 	public String readLastLogin(String uname) {
 		String lastLogin = null;
 		try {
-			PreparedStatement loginreadstmt = con.prepareStatement("SELECT lastlogin FROM member WHERE uname = ?;");
-			loginreadstmt.setString(1, uname);
-			ResultSet loginreadrs = loginreadstmt.executeQuery();
-			if (loginreadrs.next() && loginreadrs.getObject("lastlogin") != null) {
-				lastLogin = loginreadrs.getString("lastlogin");
+			PreparedStatement loginReadStatement = con.prepareStatement("SELECT lastlogin FROM member WHERE uname = ?;");
+			loginReadStatement.setString(1, uname);
+			ResultSet loginReadResultSet = loginReadStatement.executeQuery();
+			if (loginReadResultSet.next() && loginReadResultSet.getObject("lastlogin") != null) {
+				lastLogin = loginReadResultSet.getString("lastlogin");
 				writeLoginTime();
 			} else {
 				writeLoginTime();
@@ -118,17 +124,17 @@ public class Helper {
 		SignupWindow signup = new SignupWindow();
 		gui.addWindowAndWait(signup);
 		String uname = signup.getUsername();
-		String fName = signup.getFirstname();
-		String sName = signup.getLastname();
-		String passHash = signup.getPassword();
+		String firstName = signup.getFirstname();
+		String lastName = signup.getLastname();
+		String passhash = signup.getPassword();
 		try {
-			PreparedStatement signupstmt = con.prepareStatement(
+			PreparedStatement signupStatement = con.prepareStatement(
 					"INSERT INTO member (uname, fname, sname, passhash) VALUES (?, ?, ?, ?);");
-			signupstmt.setString(1, uname);
-			signupstmt.setString(2, fName);
-			signupstmt.setString(3, sName);
-			signupstmt.setString(4, passHash);
-			signupstmt.executeUpdate();
+			signupStatement.setString(1, uname);
+			signupStatement.setString(2, firstName);
+			signupStatement.setString(3, lastName);
+			signupStatement.setString(4, passhash);
+			signupStatement.executeUpdate();
 			MessageDialog.showMessageDialog(gui, "Success", "Proceed to login");
 		} catch (Exception e) {
 			throw new RuntimeException(e);
