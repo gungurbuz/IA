@@ -22,6 +22,7 @@ public class ColoredButton extends Button {
 		});
 	}
 	
+	
 	private static class FixedBackgroundButtonThemeStyle extends DelegatingThemeDefinition {
 		
 		private final TextColor.ANSI color;
@@ -42,6 +43,8 @@ public class ColoredButton extends Button {
 			DefaultMutableThemeStyle mutableThemeStyle = new DefaultMutableThemeStyle(super.getActive());
 			return mutableThemeStyle.setBackground(color);
 		}
+		
+		
 		
 	}
 	
