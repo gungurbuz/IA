@@ -49,7 +49,6 @@ public class Helper {
 	 * It then checks these credentials against the stored values in the database. If the
 	 * validation is successful, the method returns a Member object representing the logged-in user.
 	 * If the credentials are incorrect or the user does not exist, appropriate error messages are displayed.
-	 *
 	 */
 	
 	
@@ -123,23 +122,25 @@ public class Helper {
 	public synchronized void signup() {
 		SignupWindow signup = new SignupWindow();
 		gui.addWindowAndWait(signup);
-		String uname = signup.getUsername();
-		String firstName = signup.getFirstname();
-		String lastName = signup.getLastname();
-		String passhash = signup.getPassword();
-		try {
-			PreparedStatement signupStatement = con.prepareStatement(
-					"INSERT INTO member (uname, fname, sname, passhash) VALUES (?, ?, ?, ?);");
-			signupStatement.setString(1, uname);
-			signupStatement.setString(2, firstName);
-			signupStatement.setString(3, lastName);
-			signupStatement.setString(4, passhash);
-			signupStatement.executeUpdate();
-			MessageDialog.showMessageDialog(gui, "Success", "Proceed to login");
-		} catch (Exception e) {
-			throw new RuntimeException(e);
+		if (signup.isComplete()) {
+			String uname = signup.getUsername();
+			String firstName = signup.getFirstname();
+			String lastName = signup.getLastname();
+			String passhash = signup.getPassword();
+			try {
+				PreparedStatement signupStatement = con.prepareStatement(
+						"INSERT INTO member (uname, fname, sname, passhash) VALUES (?, ?, ?, ?);");
+				signupStatement.setString(1, uname);
+				signupStatement.setString(2, firstName);
+				signupStatement.setString(3, lastName);
+				signupStatement.setString(4, passhash);
+				signupStatement.executeUpdate();
+				MessageDialog.showMessageDialog(gui, "Success", "Proceed to login");
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+			wait(500);
 		}
-		wait(500);
 	}
 	
 	

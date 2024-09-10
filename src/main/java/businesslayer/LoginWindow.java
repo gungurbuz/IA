@@ -32,17 +32,13 @@ public class LoginWindow extends BasicWindow {
 		passwordBox.setMask('*');
 		passwordPanel.addComponent(passwordBox);
 		Panel buttonPanel = new Panel();
-		Panel exitPanel = new Panel();
 		Button exit = new Button("Exit", LoginWindow.this::close);
-		exitPanel.setFillColorOverride(TextColor.ANSI.RED);
-		exitPanel.addComponent(exit);
-		Panel enterPanel = new Panel();
+		buttonPanel.addComponent(exit);
 		Button enter = new Button("Enter", () -> {
 			isComplete = true;
 			LoginWindow.this.close();
 		});
-		enterPanel.setFillColorOverride(TextColor.ANSI.GREEN);
-		enterPanel.addComponent(enter);
+		buttonPanel.addComponent(enter);
 		buttonPanel.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
 		buttonPanel.addComponent(exit);
 		buttonPanel.addComponent(enter);

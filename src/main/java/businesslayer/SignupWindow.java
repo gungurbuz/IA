@@ -24,6 +24,7 @@ public class SignupWindow extends BasicWindow {
 	TextBox passwordBox;
 	TextBox confirmPasswordBox;
 	Password passwordClass = new Password();
+	private boolean isComplete = false;
 	
 	SignupWindow() {
 		super("Sign up for member account");
@@ -46,22 +47,24 @@ public class SignupWindow extends BasicWindow {
 		confirmPasswordBox = new TextBox(new TerminalSize(30, 1));
 		confirmPasswordBox.setMask('*');
 		confirmPasswordPanel.addComponent(confirmPasswordBox);
-		Panel exitPanel = new Panel();
-		Button exit = new Button("Enter", () -> {
+		Panel buttonPanel = new Panel();
+		Button enter = new Button("Enter", () -> {
 			if (passwordBox.getText().equals(confirmPasswordBox.getText())) {
+				isComplete = true;
 				SignupWindow.this.close();
 			} else {
 				MessageDialog.showMessageDialog(gui, "Error", "Passwords do not match");
 			}
 		});
-		exitPanel.addComponent(exit);
+		buttonPanel.addComponent(enter);
+		Button exit = new Button("Exit", SignupWindow.this::close);
 		mainPanel.setLayoutManager(new LinearLayout(Direction.VERTICAL));
 		mainPanel.addComponent(usernamePanel.withBorder(Borders.singleLine("Username")));
 		mainPanel.addComponent(firstnamePanel.withBorder(Borders.singleLine("First name")));
 		mainPanel.addComponent(lastnamePanel.withBorder(Borders.singleLine("Last name")));
 		mainPanel.addComponent(passwordPanel.withBorder(Borders.singleLine("Password")));
 		mainPanel.addComponent(confirmPasswordPanel.withBorder(Borders.singleLine("Confirm Password")));
-		mainPanel.addComponent(exitPanel.withBorder(Borders.singleLine()));
+		mainPanel.addComponent(buttonPanel.withBorder(Borders.singleLine()));
 		setComponent(mainPanel.withBorder(Borders.singleLine()));
 	}
 	
@@ -79,6 +82,10 @@ public class SignupWindow extends BasicWindow {
 	
 	public String getPassword() {
 		return passwordClass.makePass((passwordBox.getText()));
+	}
+	
+	public boolean isComplete(){
+		return isComplete;
 	}
 	
 }
