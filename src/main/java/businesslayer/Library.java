@@ -220,8 +220,8 @@ public class Library {
 				addBookAuthorsStatement.setString(2, currentBook.getAuthorLastNames().get(i));
 				addBookAuthorsStatement.executeUpdate();
 				authorIDStack.push(getLastInsertId());
-			}
-			PreparedStatement addBookAuthorsToBridgeStatement = con
+			}PreparedStatement addBookAuthorsToBridgeStatement =
+					con
 					.prepareStatement("INSERT INTO bookauthors VALUES (?, ?);");
 			for (int i = 1; i < authorIDStack.size(); i++) {
 				addBookAuthorsToBridgeStatement.setInt(1, bookId);
