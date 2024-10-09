@@ -58,6 +58,7 @@ public class SignupWindow extends BasicWindow {
 		});
 		buttonPanel.addComponent(enter);
 		Button exit = new Button("Exit", SignupWindow.this::close);
+		buttonPanel.addComponent(exit);
 		mainPanel.setLayoutManager(new LinearLayout(Direction.VERTICAL));
 		mainPanel.addComponent(usernamePanel.withBorder(Borders.singleLine("Username")));
 		mainPanel.addComponent(firstnamePanel.withBorder(Borders.singleLine("First name")));

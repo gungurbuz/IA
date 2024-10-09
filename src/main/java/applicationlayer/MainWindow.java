@@ -39,7 +39,9 @@ public class MainWindow extends BasicWindow {
 			MainWindow.this.close();
 		}));
 		Panel middlePanel = new Panel();
-		middlePanel.addComponent(new Button("Sign Up", () -> Helper.getHelper().signup()));
+		middlePanel.addComponent(new Button("Sign Up", () -> {
+			Helper.getHelper().signup();
+		}));
 		Panel rightPanel = new Panel();
 		rightPanel.addComponent(new Button("Exit", () -> {
 			App.isRunning.set(false);

@@ -12,6 +12,7 @@ applicationlayer\App.class
 databaselayer\Password.class
 applicationlayer\AuthWindow.class
 businesslayer\ColoredButton.class
+applicationlayer\AlpYarkinDemir.class
 businesslayer\Book.class
 applicationlayer\BookAddWindow.class
 businesslayer\ColoredButton$FixedBackgroundButtonThemeStyle.class
