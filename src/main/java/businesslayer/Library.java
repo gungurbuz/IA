@@ -18,7 +18,7 @@ public class Library {
     private Connection con;
     private PreparedStatement getLastInsertIdStatement;
     private static Library library;
-    private static HashMap<Integer, Coordinate> libraryLocations = new HashMap<>();
+    private static final HashMap<Integer, Coordinate> libraryLocations = new HashMap<>();
 
     public static HashMap<Integer, Coordinate> getLibraryLocations() {
         return libraryLocations;
@@ -65,10 +65,7 @@ public class Library {
         }
         return library;
     }
-
-    public Coordinate setLocation(int x, int y) {
-        return new Coordinate(x, y);
-    }
+    
 
     public ArrayList<Integer> languageSelect(HashMap<Integer, String> langNames) {
         Helper.getHelper().wait(500);
@@ -90,9 +87,9 @@ public class Library {
                 }
                 System.out.println("999. Add new language");
                 String langChoiceString = s.nextLine();
-                if (langChoiceString.equals(null)) {
+                if (langChoiceString.isEmpty()) {
                     System.out.println("Invalid input, please enter a number.");
-                } else if (Objects.nonNull(langChoiceString)) {
+                } else {
                     int langId = Integer.parseInt(langChoiceString);
                     if (Objects.isNull(langNames.get(langId)) && langId != 999) { // checks if user input is a valid
                                                                                   // language and not a new language
@@ -118,10 +115,10 @@ public class Library {
                 do {
                     System.out.println("Do you want to add another language? (Y/N)");
                     String continueString = s.nextLine();
-                    if (continueString.toUpperCase().equals("N")) {
+                    if (continueString.equalsIgnoreCase("N")) {
                         App.getCurrentBook().setLang(true);
                         continueTest = true;
-                    } else if (continueString.toUpperCase().equals("Y")) {
+                    } else if (continueString.equalsIgnoreCase("Y")) {
                         continueTest = true;
                     } else {
                         System.out.println("Invalid input, try again.");
@@ -138,7 +135,7 @@ public class Library {
 
     public int publisherSelect(HashMap<Integer, String> publisherNames) {
         Helper.getHelper().wait(500);
-        String tempPublisher = "";
+        String tempPublisher;
         int tempPublisherId;
         Helper.getHelper().clearConsole();
         System.out.println("Choose publisher from options below or enter 999 to add a new one");
@@ -156,9 +153,9 @@ public class Library {
             }
             System.out.println("999. Add new publisher");
             String PublisherChoiceString = s.nextLine();
-            if (PublisherChoiceString.equals(null)) {
+            if (PublisherChoiceString.isEmpty()) {
                 System.out.println("Invalid input, please enter a number.");
-            } else if (Objects.nonNull(PublisherChoiceString)) {
+            } else {
                 int publisherId = Integer.parseInt(PublisherChoiceString);
                 if (Objects.isNull(publisherNames.get(publisherId)) && publisherId != 999) { // checks if user input is
                                                                                              // a valid
@@ -194,7 +191,7 @@ public class Library {
                     "INSERT INTO book (bookname, isbn, genre, pubyear, idpublisher, locationx, locationy) VALUES (?, ?, ?, ?, ?, ?, ?);");
             addBookStatement.setString(1, currentBook.getBooktitle());
             addBookStatement.setString(2, currentBook.getISBN13());
-            if (currentBook.getGenre().equals("")) {
+            if (currentBook.getGenre().isEmpty()) {
                 addBookStatement.setString(3, null);
             } else {
                 addBookStatement.setString(3, currentBook.getGenre());
