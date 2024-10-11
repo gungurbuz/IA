@@ -7,7 +7,6 @@ import com.googlecode.lanterna.gui2.LinearLayout;
 import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.gui2.ProgressBar;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class BookAddWindow extends BasicWindow {
@@ -21,9 +20,6 @@ public class BookAddWindow extends BasicWindow {
 		Panel progressBarPanel = new Panel();
 		progressBarPanel.addComponent(progressBar);
 		mainPanel.addComponent(progressBarPanel.withBorder(Borders.singleLineBevel("Book Addition Progress")));
-		if (progress < 0 || progress > 100) {
-			throw new IllegalArgumentException("Progress value must be between 0 and 100");
-		}
 		progressBar.setValue(progress);
 		setComponent(mainPanel);
 	}

@@ -26,9 +26,6 @@ public class AuthorsWindow extends BookAddWindow{
 		buttonPanel.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
 		Button addAuthor = new Button("Add Author", () -> mainPanel.addComponent(addAuthorLine()));
 		Button exit = new Button("Continue", () -> {
-			if(authorFirstNameBoxes.getFirst().getText().isEmpty()){
-			
-			}
 			while (!authorFirstNameBoxes.isEmpty()) {
 				if(authorFirstNameBoxes.getFirst().getText().isEmpty()){
 					MessageDialog.showMessageDialog(gui, "Error", "Please input a first name");

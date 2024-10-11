@@ -23,7 +23,7 @@ public class TitleWindow extends BookAddWindow {
 		((Panel) this.getComponent()).addComponent(titlePanel.withBorder(Borders.singleLineBevel()));
 	}
 	
-	public String getTitle() {
+	public String getBookTitle() {
 		return titleBox.getText();
 	}
 	

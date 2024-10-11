@@ -2,7 +2,7 @@ package applicationlayer;
 
 import businesslayer.Helper;
 
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -11,7 +11,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import com.googlecode.lanterna.gui2.Window;
 import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
-import org.apache.commons.validator.routines.ISBNValidator;
 
 import businesslayer.Book;
 import businesslayer.Library;
@@ -84,11 +83,14 @@ public class App {
 			boolean isAuthor = false;
 			TitleWindow titleWindow = new TitleWindow();
 			currentWindow = titleWindow;
-			gui.addWindowAndWait(titleWindow);
-			currentBook.get().setBooktitle(titleWindow.getTitle());
-			AuthorsWindow authorsWindow = new AuthorsWindow();
-			currentWindow = authorsWindow;
-			gui.addWindowAndWait(authorsWindow);
+			gui.addWindowAndWait(currentWindow);
+			currentBook.get().setBooktitle(titleWindow.getBookTitle());
+			currentWindow = new AuthorsWindow();
+			gui.addWindowAndWait(currentWindow);
+			currentWindow = new ISBNWindow();
+			gui.addWindowAndWait(currentWindow);
+			currentBook.get().setISBN13(((ISBNWindow)currentWindow).getISBN());
+			
 			/*
 			testing
 			for (int i = 0; i < currentBook.get().getAuthorFirstNames().size(); i++) {
@@ -153,13 +155,11 @@ public class App {
 			 }
 			*/
 		} catch (Exception e) {
-			currentBook.remove();
-			Window errorSource = currentWindow;
-			if (((Object) currentWindow) != null) {
+			if (currentWindow != null) {
+				MessageDialog.showMessageDialog(gui, "Error", "An error occurred:" + currentWindow.getClass().getName());
 				currentWindow.close();
 			}
-			MessageDialog.showMessageDialog(gui, "Error", "An error occurred:" + errorSource.getClass().getName());
-			
+			MessageDialog.showMessageDialog(gui, "Error", "An unknown error occurred:" + Arrays.toString(e.getStackTrace()));
 		}
 		Library.getLibrary().addBook(currentBook.get());
 	}

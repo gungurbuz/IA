@@ -37,6 +37,10 @@ public class Helper {
 		return helper;
 	}
 	
+	public static WindowBasedTextGUI getGUI(){
+		return gui;
+	}
+	
 	public synchronized void logout() {
 		currentUser = null;
 	}
