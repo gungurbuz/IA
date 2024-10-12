@@ -46,13 +46,15 @@ This repository contains the code for my Computer Science Internal Assessment, w
 
 - Java Development Kit (JDK) 21 or higher
 - Apache Maven
+- Oracle MySQL
+- Unix or Unix-like system
 
 ### Steps
 
 1. Clone the repository:
 
     ```sh
-    git clone -b mavenwithlanterna --single-branch https://github.com/gungurbuz/IA
+    git clone https://github.com/gungurbuz/IA
     ```
 
 2. Navigate to the project directory:
