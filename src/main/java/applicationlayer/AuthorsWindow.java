@@ -42,7 +42,7 @@ public class AuthorsWindow extends BookAddWindow{
 		
 		
 	}
-	public Component addAuthorLine(){
+	private Component addAuthorLine(){
 		Panel authorPanel = new Panel();
 		Panel authorFirstNamePanel = new Panel();
 		TextBox authorFirstNameBox = new TextBox(new TerminalSize(40, 1));
