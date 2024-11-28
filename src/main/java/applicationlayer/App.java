@@ -73,8 +73,6 @@ public class App {
 		
 		
 	}
-	
-	
 	public static void addBookApp() {
 		String ISBN;
 		currentBook.set(new Book());
