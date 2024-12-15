@@ -64,15 +64,17 @@ public class Helper {
 			
 			String username = login.getUsername();
 			String passhash = login.getPassword();
+			String memberID;
 			
 			ResultSet loginResultSet;
-			try (PreparedStatement loginStatement = con.prepareStatement("SELECT passhash FROM member WHERE uname = ?;")) {
+			try (PreparedStatement loginStatement = con.prepareStatement("SELECT idmember, passhash FROM member WHERE uname = ?;")) {
 				loginStatement.setString(1, username);
 				loginResultSet = loginStatement.executeQuery();
 				
 				if (loginResultSet.next()) {
 					if (loginResultSet.getString("passhash").equals(passhash)) {
-						currentUser = new Member(username, passhash);
+						memberID = (String.valueOf(loginResultSet.getInt("idmember")));
+						currentUser = new Member(memberID, username, passhash);
 						login.close();
 						writeLoginTime();
 						App.setCurrentUser(currentUser);

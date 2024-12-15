@@ -1,21 +1,23 @@
 package businesslayer;
 
 public class Member {
-
+    private String idmember;
     private String username;
     private String passHash;
     private String phoneNumber;
     private String email;
-
-    public Member(String username, String passHash) {
-        this.username = username;
-        this.passHash = passHash;
+    
+    public String getIdmember() {
+        return idmember;
     }
-
-    public Member(String username, String passHash, String phoneNumber) {
+    
+    public void setIdmember(String idmember) {
+        this.idmember = idmember;
+    }
+    public Member(String idmember, String username, String passHash) {
+        this.idmember = idmember;
         this.username = username;
         this.passHash = passHash;
-        this.phoneNumber = phoneNumber;
     }
 
     public String getPhoneNumber() {
@@ -41,5 +43,7 @@ public class Member {
     public String getUsername() {
         return username;
     }
-
+	
+	
+	
 }

@@ -20,6 +20,18 @@
           </config>
         </ContributedStateBase>
       </target>
+      <target name="WSL - Ubuntu-22.04" type="wsl" uuid="909d2ad1-1011-4d4e-900f-e80f8ac9dee9">
+        <config>
+          <option name="distributionMsId" value="Ubuntu-22.04" />
+          <option name="projectRootOnTarget" value="{exitCode=0, timeout=false, cancelled=false, stdout=/tmp/tmp.y0zelOllXr&#10;, stderr=}/ia" />
+        </config>
+        <ContributedStateBase type="JavaLanguageRuntime">
+          <config>
+            <option name="homePath" value="/usr/lib/jvm/java-21-openjdk-amd64" />
+            <option name="javaVersionString" value="21.0.4" />
+          </config>
+        </ContributedStateBase>
+      </target>
     </targets>
   </component>
 </project>

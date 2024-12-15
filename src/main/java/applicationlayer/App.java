@@ -22,13 +22,17 @@ public class App {
 	
 	private static final Scanner s = new Scanner(System.in);
 	
-	private static AtomicReference<Member> currentUser = new AtomicReference<>();
+	private static Member currentUser = null;
 	private static ThreadLocal<Book> currentBook = new ThreadLocal<>();
 	private static final WindowBasedTextGUI gui = getTextGUI();
 	public static final AtomicBoolean isRunning = new AtomicBoolean(false);
 	
 	public static synchronized void setCurrentUser(Member currentUser) {
-		App.currentUser.set(currentUser);
+		App.currentUser = currentUser;
+	}
+	
+	public static synchronized String getCurrentUserID() {
+		return currentUser.getIdmember();
 	}
 	
 	public static Book getCurrentBook() {
@@ -57,12 +61,12 @@ public class App {
 			MainWindow mainWindow = new MainWindow();
 			
 			try {
-				if (Objects.isNull(currentUser.get())) {
+				if (Objects.isNull(currentUser)) {
 					gui.addWindowAndWait(mainWindow);
 					mainWindow.close();
 				} else {
 					AuthWindow authorizedWindow = new AuthWindow();
-					MessageDialog.showMessageDialog(gui, "Last Login:", Helper.getHelper().readLastLogin(currentUser.get().getUsername()));
+					MessageDialog.showMessageDialog(gui, "Last Login:", Helper.getHelper().readLastLogin(currentUser.getUsername()));
 					gui.addWindowAndWait(authorizedWindow);
 					
 				}

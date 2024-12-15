@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 public class Book {
 	
+	private String bookid = null;
 	private String booktitle = "";
 	private ArrayList<String> authorFirstNames = new ArrayList<String>();
 	private ArrayList<String> authorLastNames = new ArrayList<String>();
@@ -18,6 +19,14 @@ public class Book {
 	
 	public Coordinate getLocation() {
 		return location;
+	}
+	
+	public String getBookX(){
+		return String.valueOf(location.getX());
+	}
+	
+	public String getBookY(){
+		return String.valueOf(location.getY());
 	}
 	
 	public void setLocation(Coordinate location) {
@@ -127,6 +136,14 @@ public class Book {
 	
 	public void setPubYear(String pubYear) {
 		this.pubYear = pubYear;
+	}
+	
+	public String getBookid() {
+		return bookid;
+	}
+	
+	public void setBookid(String bookid) {
+		this.bookid = bookid;
 	}
 	
 }
