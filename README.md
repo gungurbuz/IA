@@ -66,7 +66,7 @@ This repository contains the code for my Computer Science Internal Assessment, w
 3. Compile the project using Maven:
 
     ```sh
-    mvn clean install
+    mvn compile -Dexec.mainClass=applicationlayer.App
     ```
 
 4. Run the application:
