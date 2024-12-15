@@ -72,7 +72,7 @@ This repository contains the code for my Computer Science Internal Assessment, w
 4. Run the application:
 
     ```sh
-    mvn exec:java -Dexec.mainClass="App"
+    mvn exec:java -Dexec.mainClass="applicationlayer.App"
     ```
 
 ## Usage
