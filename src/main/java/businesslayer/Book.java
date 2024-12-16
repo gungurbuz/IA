@@ -8,7 +8,7 @@ public class Book {
 	private String booktitle = "";
 	private ArrayList<String> authorFirstNames = new ArrayList<String>();
 	private ArrayList<String> authorLastNames = new ArrayList<String>();
-	private ArrayList<Integer> langIds = new ArrayList<Integer>();
+	private ArrayList<Integer> langIds = new ArrayList<>();
 	private boolean isLang = false;
 	private boolean isPublisher = false;
 	private String ISBN13 = "";

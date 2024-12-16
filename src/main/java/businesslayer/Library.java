@@ -214,7 +214,6 @@ public class Library {
 							
 							// Get the ID of the newly inserted language
 							int newLanguageId = getLastInsertId();
-							langIds.add(newLanguageId);
 							
 							// Refresh table
 							languageTable.getTableModel().addRow(
