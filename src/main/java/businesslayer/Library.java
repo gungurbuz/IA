@@ -9,6 +9,7 @@ import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.dialogs.*;
 import com.googlecode.lanterna.gui2.table.Table;
+import com.googlecode.lanterna.gui2.table.TableModel;
 import databaselayer.DatabaseConnector;
 import databaselayer.GUIConnector;
 
@@ -74,7 +75,7 @@ public class Library {
 		return new Coordinate(x, y);
 	}
 	
-	public ArrayList<Integer> languageSelect(HashMap<Integer, String> langNames) {
+	/*public ArrayList<Integer> languageSelect(HashMap<Integer, String> langNames) {
 		String tempLang;
 		ArrayList<Integer> langIds = new ArrayList<>(); // the language id(s) of the current book
 		int i = 1;
@@ -138,8 +139,271 @@ public class Library {
 		}
 		return langIds;
 	}
+	*/
+	
+	public ArrayList<Integer> languageSelect(HashMap<Integer, String> langNames) {
+		ArrayList<Integer> langIds = new ArrayList<>();
+		// Create main window
+		BasicWindow languageWindow = new BasicWindow("Select Languages");
+		try {
+			while (!App.getCurrentBook().isLang()) {
+				// Clear previous entries
+				langNames.clear();
+				
+				Panel mainPanel = new Panel();
+				mainPanel.setLayoutManager(new LinearLayout(Direction.VERTICAL));
+				
+				// Create table
+				TerminalSize tableSize = new TerminalSize(60, 20);
+				Table<String> languageTable = new Table<>("ID", "Language Name");
+				languageTable.setPreferredSize(tableSize);
+				
+				// Fetch languages from database
+				Statement langstmt = con.createStatement();
+				ResultSet langstmtrs = langstmt.executeQuery("SELECT * FROM language;");
+				
+				// Populate table and language names map
+				while (langstmtrs.next()) {
+					int languageId = langstmtrs.getInt("idlang");
+					String tempLang = langstmtrs.getString("languagename");
+					
+					// Store language in the map
+					langNames.put(languageId, tempLang);
+					
+					// Add to table
+					languageTable.getTableModel().addRow(String.valueOf(languageId), tempLang);
+				}
+				
+				// Add select button
+				languageTable.setSelectAction(() -> {
+					new ActionListDialogBuilder()
+							.setTitle(languageTable.getTableModel().getCell(1, languageTable.getSelectedRow()))
+							.addAction("Confirm Language?", () -> {
+								int selectedRow = languageTable.getSelectedRow();
+								
+								if (selectedRow >= 0) {
+									int languageId = Integer.parseInt(languageTable.getTableModel().getCell(0, selectedRow));
+									langIds.add(languageId);
+									
+								} else {
+									MessageDialog.showMessageDialog(
+											GUIConnector.getTextGUI(),
+											"Error",
+											"Please select a language"
+									);
+								}
+							})
+							.build()
+							.showDialog(gui);
+				});
+				
+				// Add new language button
+				Button addNewLanguageButton = new Button("Add New", () -> {
+					String newLang = new TextInputDialogBuilder()
+							.setTitle("Add New Language")
+							.setDescription("Enter the name of the new language:")
+							.build()
+							.showDialog(gui);
+					
+					if (newLang != null && !newLang.isEmpty()) {
+						try {
+							PreparedStatement addlangstmt = con
+									.prepareStatement("INSERT INTO language (languagename) VALUES (?);");
+							addlangstmt.setString(1, newLang);
+							addlangstmt.executeUpdate();
+							
+							// Get the ID of the newly inserted language
+							int newLanguageId = getLastInsertId();
+							langIds.add(newLanguageId);
+							
+							// Refresh table
+							languageTable.getTableModel().addRow(
+									String.valueOf(newLanguageId),
+									newLang
+							);
+							
+							// Prompt for another language
+							MessageDialogButton response = MessageDialog.showMessageDialog(
+									GUIConnector.getTextGUI(),
+									"Add Another",
+									"Do you want to add/choose another language?",
+									MessageDialogButton.Yes, MessageDialogButton.No
+							);
+							
+							if (response == MessageDialogButton.No) {
+								App.getCurrentBook().setLang(true);
+								languageWindow.close();
+							}
+						} catch (Exception e) {
+							MessageDialog.showMessageDialog(
+									GUIConnector.getTextGUI(),
+									"Error",
+									"Failed to add new language: " + e.getMessage()
+							);
+						}
+					}
+				});
+				Button confirmLanguages = new Button("Continue", () -> {
+					App.getCurrentBook().setLang(true);
+					languageWindow.close();
+				});
+				// Create button panel
+				Panel buttonPanel = new Panel();
+				buttonPanel.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
+				buttonPanel.addComponent(addNewLanguageButton);
+				buttonPanel.addComponent(confirmLanguages);
+				
+				// Assemble main panel
+				mainPanel.addComponent(languageTable);
+				mainPanel.addComponent(buttonPanel);
+				
+				languageWindow.setComponent(mainPanel);
+				
+				// Show the window and wait for user interaction
+				GUIConnector.getTextGUI().addWindowAndWait(languageWindow);
+			}
+		} catch (Exception e) {
+			MessageDialog.showMessageDialog(
+					GUIConnector.getTextGUI(),
+					"Error",
+					"Error in language selection: " + e.getMessage()
+			);
+			System.out.println(e.getMessage());
+			languageWindow.close();
+		}
+		languageWindow.close();
+		return langIds;
+	}
+	
+	int tempPub;
+	
+	private void setTempPub(int i){
+		tempPub = i;
+	}
+	
+	private int getTempPub(){
+		return tempPub;
+	}
+	
 	
 	public int publisherSelect(HashMap<Integer, String> publisherNames) {
+		tempPub = 0;
+		try {
+			// Clear previous entries
+			publisherNames.clear();
+			// Create main window
+			BasicWindow publisherWindow = new BasicWindow("Select Publisher");
+			publisherWindow.setHints(List.of(Window.Hint.CENTERED));
+			Panel mainPanel = new Panel();
+			mainPanel.setLayoutManager(new LinearLayout(Direction.VERTICAL));
+			
+			// Create table
+			TerminalSize tableSize = new TerminalSize(80, 20);
+			Table<String> publisherTable = new Table<>("ID", "Publisher Name");
+			publisherTable.setPreferredSize(tableSize);
+			
+			// Fetch publishers from database
+			String publisherFetchSQL = "SELECT * FROM publisher;";
+			PreparedStatement publisherstmt = con.prepareStatement(publisherFetchSQL);
+			ResultSet publisherstmtrs = publisherstmt.executeQuery();
+			
+			// Populate table and publisher names map
+			while (publisherstmtrs.next()) {
+				int tempPublisherId = (publisherstmtrs.getInt("idpublisher"));
+				String tempPublisher = publisherstmtrs.getString("publishername");
+				
+				// Store publisher in the map
+				publisherNames.put(tempPublisherId, tempPublisher);
+				
+				// Add to table
+				publisherTable.getTableModel().addRow(
+						String.valueOf(tempPublisherId),
+						tempPublisher
+				);
+			}
+			publisherTable.setSelectAction(() -> {
+				new ActionListDialogBuilder()
+						.setTitle(publisherTable.getTableModel().getCell(1, publisherTable.getSelectedRow()))
+						.addAction("Select Publisher", () -> {
+							int selectedRow = publisherTable.getSelectedRow();
+							
+							if (selectedRow >= 0) {
+								 setTempPub(Integer.parseInt(publisherTable.getTableModel().getCell(0, selectedRow)));
+								App.getCurrentBook().setPublisher(true);
+								publisherWindow.close();
+								GUIConnector.getTextGUI().removeWindow(publisherWindow);
+							} else {
+								MessageDialog.showMessageDialog(
+										GUIConnector.getTextGUI(),
+										"Error",
+										"Please select a publisher"
+								);
+							}
+						})
+						.build()
+						.showDialog(gui);
+			});
+			Button addNewPublisherButton = new Button("Add New", () -> {
+				String newPublisher = new TextInputDialogBuilder()
+						.setTitle("Add New Publisher")
+						.setDescription("Enter the name of the new publisher:")
+						.build()
+						.showDialog(gui);
+						
+				
+				if (newPublisher != null && !newPublisher.isEmpty()) {
+					try {
+						String addPublisherSQL = "INSERT INTO publisher (publishername) VALUES (?);";
+						PreparedStatement addpubstmt = con.prepareStatement(addPublisherSQL);
+						addpubstmt.setString(1, newPublisher);
+						addpubstmt.executeUpdate();
+						
+						// Get the ID of the newly inserted publisher
+						int newPublisherId = getLastInsertId();
+						
+						// Add to table
+						publisherTable.getTableModel().addRow(
+								String.valueOf(newPublisherId),
+								newPublisher
+						);
+						
+					} catch (Exception e) {
+						MessageDialog.showMessageDialog(
+								GUIConnector.getTextGUI(),
+								"Error",
+								"Failed to add new publisher: " + e.getMessage()
+						);
+					}
+				}
+			});
+			
+			// Create button panel
+			Panel buttonPanel = new Panel();
+			buttonPanel.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
+			buttonPanel.addComponent(addNewPublisherButton);
+			
+			// Assemble main panel
+			mainPanel.addComponent(publisherTable);
+			mainPanel.addComponent(buttonPanel);
+			
+			publisherWindow.setComponent(mainPanel);
+			
+			// Show the window and wait for user interaction
+			gui.addWindowAndWait(publisherWindow);
+		} catch (Exception e) {
+			MessageDialog.showMessageDialog(
+					GUIConnector.getTextGUI(),
+					"Error",
+					"Error in publisher selection: " + e.getMessage()
+			);
+			MessageDialog.showMessageDialog(gui, "Error", "Invalid input:" + e.getMessage());
+			throw new RuntimeException(e);
+		}
+		
+		return tempPub;
+	}
+	
+	/*public int publisherSelect(HashMap<Integer, String> publisherNames) {
 		Helper.getHelper().wait(500);
 		String tempPublisher;
 		int tempPublisherId;
@@ -188,27 +452,31 @@ public class Library {
 		}
 		System.out.println("error");
 		return 0;
-	}
+	}*/
 	
 	public void addBook(Book currentBook) { // to be completed
 		try {
 			PreparedStatement addBookStatement = con.prepareStatement(
-					"INSERT INTO book (bookname, isbn, genre, pubyear, idpublisher, locationx, locationy) VALUES (?, ?, ?, ?, ?, ?, ?);");
-			addBookStatement.setString(1, currentBook.getBooktitle());
-			addBookStatement.setString(2, currentBook.getISBN13());
+					"INSERT INTO book (pubyear, bookname, isbn, genre, idpublisher, locationx, locationy) VALUES (?, ?, ?, ?, ?, ?, ?);");
+			addBookStatement.setString(2, currentBook.getBooktitle());
+			addBookStatement.setString(3, currentBook.getISBN13());
 			if (currentBook.getGenre().isEmpty()) {
-				addBookStatement.setString(3, null);
+				addBookStatement.setString(4, null);
 			} else {
-				addBookStatement.setString(3, currentBook.getGenre());
+				addBookStatement.setString(4, currentBook.getGenre());
 			}
-			addBookStatement.setString(4, currentBook.getPubYear());
+			if (currentBook.getPubYear().isEmpty()){
+				addBookStatement.setString(1, null);
+			}else {
+				addBookStatement.setString(1, currentBook.getPubYear());
+			}
 			addBookStatement.setInt(5, currentBook.getPublisherId());
 			addBookStatement.setInt(6, currentBook.getLocation().getX());
 			addBookStatement.setInt(7, currentBook.getLocation().getY());
 			addBookStatement.executeUpdate();
 			int bookId = getLastInsertId();
 			
-			Stack<Integer> authorIDStack = new Stack<Integer>();
+			Stack<Integer> authorIDStack = new Stack<>();
 			PreparedStatement addBookAuthorsStatement = con
 					.prepareStatement("INSERT INTO author (authorfname, authorsname) VALUES (?, ?);");
 			for (int i = 0; i < currentBook.getAuthorFirstNames().size(); i++) {
@@ -220,7 +488,7 @@ public class Library {
 			PreparedStatement addBookAuthorsToBridgeStatement =
 					con
 							.prepareStatement("INSERT INTO bookauthors VALUES (?, ?);");
-			for (int i = 1; i < authorIDStack.size(); i++) {
+			for (int i = 1; i <= authorIDStack.size(); i++) {
 				addBookAuthorsToBridgeStatement.setInt(1, bookId);
 				addBookAuthorsToBridgeStatement.setInt(2, authorIDStack.pop());
 				addBookAuthorsToBridgeStatement.executeUpdate();
@@ -694,26 +962,27 @@ public class Library {
 		return getLastInsertIdStatementResultSet.getInt(1);
 	}
 	
-	public Table<String> getLibraryModel(){
-		Table<String> table = new Table<String>(
-					"1",
-					"2",
-					"3",
-					"4",
-					"5"
+	public static Table<String> getLibraryModel(){
+		Table<String> table = new Table<>(
+				"1",
+				"2",
+				"3",
+				"4",
+				"5"
 		);
 		table.setVisibleRows(15);
 
-// Custom table data to match the visual design
+		// Custom table data to match the visual design
 		String[][] tableData = {
 				{"1", "2", "3", "4", "5"},
 				{"6", "7", "8/9/10", "11", "12"},
 				{"13", "14", "UNAVAILABLE", "15", "16"},
 				{"17", "18", "UNAVAILABLE", "19", "20"},
-				{"21", "22", "23", "24/25", "UNAVAILABLE"}
+				{"XX", "21", "UNAVAILABLE", "22", "23"},
+				{"24", "25", "UNAVAILABLE", "XX", "XX"}
 		};
 
-// Populate table
+		// Populate table
 		for (String[] rowData : tableData) {
 			table.getTableModel().addRow(rowData);
 		}

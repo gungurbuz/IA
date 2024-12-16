@@ -1,12 +1,7 @@
 package applicationlayer;
 
 import com.googlecode.lanterna.TerminalSize;
-import com.googlecode.lanterna.gui2.Borders;
-import com.googlecode.lanterna.gui2.Button;
-import com.googlecode.lanterna.gui2.Direction;
-import com.googlecode.lanterna.gui2.LinearLayout;
-import com.googlecode.lanterna.gui2.Panel;
-import com.googlecode.lanterna.gui2.TextBox;
+import com.googlecode.lanterna.gui2.*;
 
 public class TitleWindow extends BookAddWindow {
 	
@@ -15,9 +10,11 @@ public class TitleWindow extends BookAddWindow {
 	TitleWindow() {
 		super(0);
 		Panel titlePanel = new Panel();
-		Button exit = new Button("Enter", this::close);
+		Button exit = new Button("Continue", this::close);
+		Label label = new Label("Enter Book title");
 		titleBox = new TextBox(new TerminalSize(30, 1));
 		titlePanel.setLayoutManager(new LinearLayout(Direction.VERTICAL));
+		titlePanel.addComponent(label);
 		titlePanel.addComponent(titleBox);
 		titlePanel.addComponent(exit);
 		((Panel) this.getComponent()).addComponent(titlePanel.withBorder(Borders.singleLineBevel()));

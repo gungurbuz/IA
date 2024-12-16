@@ -1,8 +1,9 @@
 package applicationlayer;
 
-import businesslayer.Helper;
+import businesslayer.*;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Objects;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -11,10 +12,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import com.googlecode.lanterna.gui2.Window;
 import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
-
-import businesslayer.Book;
-import businesslayer.Library;
-import businesslayer.Member;
+import com.googlecode.lanterna.gui2.dialogs.MessageDialogBuilder;
+import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
 
 import static databaselayer.GUIConnector.getTextGUI;
 
@@ -23,7 +22,7 @@ public class App {
 	private static final Scanner s = new Scanner(System.in);
 	
 	private static Member currentUser = null;
-	private static ThreadLocal<Book> currentBook = new ThreadLocal<>();
+	private static Book currentBook = new Book();
 	private static final WindowBasedTextGUI gui = getTextGUI();
 	public static final AtomicBoolean isRunning = new AtomicBoolean(false);
 	
@@ -36,7 +35,7 @@ public class App {
 	}
 	
 	public static Book getCurrentBook() {
-		return currentBook.get();
+		return currentBook;
 	}
 	
 	public static void setIsRunning(boolean isRunning) {
@@ -44,7 +43,7 @@ public class App {
 	}
 	
 	public static void setCurrentBook(Book currentBook) {
-		App.currentBook.set(currentBook);
+		App.currentBook = currentBook;
 	}
 	
 	/**
@@ -79,47 +78,30 @@ public class App {
 	}
 	public static void addBookApp() {
 		String ISBN;
-		currentBook.set(new Book());
+		currentBook = new Book();
 		Window currentWindow = null;
 		try {
 			boolean isAuthor = false;
-			TitleWindow titleWindow = new TitleWindow();
-			currentWindow = titleWindow;
+			currentWindow = new TitleWindow();
 			gui.addWindowAndWait(currentWindow);
-			currentBook.get().setBooktitle(titleWindow.getBookTitle());
+			currentBook.setBooktitle(((TitleWindow) currentWindow).getBookTitle());
 			currentWindow = new AuthorsWindow();
 			gui.addWindowAndWait(currentWindow);
 			currentWindow = new ISBNWindow();
 			gui.addWindowAndWait(currentWindow);
-			currentBook.get().setISBN13(((ISBNWindow)currentWindow).getISBN());
+			currentBook.setISBN13(((ISBNWindow)currentWindow).getISBN());
+			currentWindow.close();
+			HashMap<Integer, String> languageNames = new HashMap<>();
+			currentBook.setLangIds(businesslayer.Library.getLibrary().languageSelect(languageNames));
+			languageNames = null;
+			currentWindow.close();
+			HashMap<Integer, String> publishers = new HashMap<>();
+			currentBook.setPublisherId(businesslayer.Library.getLibrary().publisherSelect(publishers));
+			languageNames = null;
+			currentWindow = new LocationWindow();
+			gui.addWindowAndWait(currentWindow);
 			
 			/*
-			testing
-			for (int i = 0; i < currentBook.get().getAuthorFirstNames().size(); i++) {
-				MessageDialog.showMessageDialog(gui, "Test", currentBook.get().getAuthorFirstNames().get(i) + " " + currentBook.get().getAuthorLastNames().get(i));
-			}
-			*/
-			/*boolean isISBN = false;
-			
-			TO DO: IMPLEMENT ISBN INPUT WINDOW
-			do {
-				System.out.println("Input ISBN without hyphens or spaces");
-				ISBN = s.nextLine();
-				if (ISBN.length() == 10) {
-					currentBook.get().setISBN13(ISBNValidator.getInstance().convertToISBN13(ISBN)); // converts pre-2007 10
-					// digit
-					// ISBNs
-					// to
-					// the current 13 digit standard
-					isISBN = true;
-				} else if (ISBN.length() == 13) {
-					currentBook.get().setISBN13(ISBN);
-					isISBN = true;
-				} else {
-					System.out.println("Invalid ISBN, please input 10 or 13 digit ISBN with no hyphens or spaces");
-				}
-			} while (!isISBN);
-			HashMap<Integer, String> languageNames = new HashMap<>();
 			do {
 				currentBook.get().setLangIds(businesslayer.Library.getLibrary().languageSelect(languageNames));
 			} while (!currentBook.get().isLang());
@@ -163,7 +145,10 @@ public class App {
 			}
 			MessageDialog.showMessageDialog(gui, "Error", "An unknown error occurred:" + Arrays.toString(e.getStackTrace()));
 		}
-		Library.getLibrary().addBook(currentBook.get());
+		Library.getLibrary().addBook(currentBook);
+		new MessageDialogBuilder()
+				.setTitle("Book Successfully Added To Database")
+				.addButton(MessageDialogButton.OK);
 	}
 	
 	
