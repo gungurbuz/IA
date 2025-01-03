@@ -4,10 +4,12 @@ import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.*;
 
 import java.sql.SQLException;
+import java.util.List;
 
 public class SearchWindow extends BasicWindow {
 	public SearchWindow() throws SQLException {
 		super ("Search Library");
+		setHints(List.of(Hint.CENTERED));
 		Panel mainPanel = new Panel();
 		mainPanel.setLayoutManager(new LinearLayout(Direction.VERTICAL));
 		Panel searchPanel = new Panel();

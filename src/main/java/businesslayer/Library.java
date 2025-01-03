@@ -145,6 +145,7 @@ public class Library {
 		ArrayList<Integer> langIds = new ArrayList<>();
 		// Create main window
 		BasicWindow languageWindow = new BasicWindow("Select Languages");
+		languageWindow.setHints(List.of(Window.Hint.CENTERED));
 		try {
 			while (!App.getCurrentBook().isLang()) {
 				// Clear previous entries
@@ -705,6 +706,7 @@ public class Library {
 		// Create a new window for results
 		BasicWindow resultsWindow = new BasicWindow("Search Results");
 		Panel mainPanel = new Panel();
+		resultsWindow.setHints(List.of(Window.Hint.CENTERED));
 		
 		// Create table
 		Table<String> resultsTable = new Table<>(columnLabels);
@@ -812,6 +814,7 @@ public class Library {
 		
 		// Create a new window for results
 		BasicWindow loansWindow = new BasicWindow("Your Active Loans");
+		loansWindow.setHints(List.of(Window.Hint.CENTERED));
 		Panel mainPanel = new Panel();
 		
 		// Create table

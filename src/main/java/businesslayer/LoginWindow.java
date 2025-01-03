@@ -1,7 +1,6 @@
 package businesslayer;
 
 import com.googlecode.lanterna.TerminalSize;
-import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.gui2.BasicWindow;
 import com.googlecode.lanterna.gui2.Borders;
 import com.googlecode.lanterna.gui2.Button;
@@ -32,16 +31,14 @@ public class LoginWindow extends BasicWindow {
 		passwordBox.setMask('*');
 		passwordPanel.addComponent(passwordBox);
 		Panel buttonPanel = new Panel();
-		Button exit = new Button("Exit", LoginWindow.this::close);
-		buttonPanel.addComponent(exit);
 		Button enter = new Button("Enter", () -> {
 			isComplete = true;
 			LoginWindow.this.close();
 		});
 		buttonPanel.addComponent(enter);
-		buttonPanel.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
+		Button exit = new Button("Exit", LoginWindow.this::close);
 		buttonPanel.addComponent(exit);
-		buttonPanel.addComponent(enter);
+		buttonPanel.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
 		mainPanel.setLayoutManager(new LinearLayout(Direction.VERTICAL));
 		mainPanel.addComponent(usernamePanel.withBorder(Borders.singleLine("Username")));
 		mainPanel.addComponent(passwordPanel.withBorder(Borders.singleLine("Password")));

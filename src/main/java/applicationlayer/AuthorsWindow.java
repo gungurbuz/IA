@@ -13,6 +13,7 @@ import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
 import databaselayer.GUIConnector;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class AuthorsWindow extends BookAddWindow{
 	WindowBasedTextGUI gui = GUIConnector.getTextGUI();
@@ -20,6 +21,7 @@ public class AuthorsWindow extends BookAddWindow{
 	ArrayList<TextBox> authorLastNameBoxes = new ArrayList<>();
 	AuthorsWindow(){
 		super(15);
+		setHints(List.of(Hint.CENTERED));
 		Panel mainPanel = new Panel();
 		mainPanel.setLayoutManager(new LinearLayout(Direction.VERTICAL));
 		Panel buttonPanel = new Panel();

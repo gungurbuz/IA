@@ -9,9 +9,6 @@ import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.Terminal;
-import com.googlecode.lanterna.terminal.swing.SwingTerminal;
-import com.googlecode.lanterna.terminal.swing.SwingTerminalFrame;
-import com.googlecode.lanterna.terminal.virtual.DefaultVirtualTerminal;
 
 
 import java.io.IOException;
@@ -48,7 +45,7 @@ public class GUIConnector {
         try {
 			Terminal terminal = new DefaultTerminalFactory().createTerminal();
 	        screen = new TerminalScreen(terminal);
-            tempgui = new MultiWindowTextGUI(screen, new DefaultWindowManager(), new EmptySpace(TextColor.ANSI.CYAN));
+            tempgui = new MultiWindowTextGUI(screen, new DefaultWindowManager(), new EmptySpace(new TextColor.RGB(25, 45, 52)));
             screen.startScreen();
         } catch (IOException e) {
             throw new RuntimeException("Failed to initialize Text GUI", e);

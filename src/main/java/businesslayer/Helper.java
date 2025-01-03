@@ -45,6 +45,9 @@ public class Helper {
 		currentUser = null;
 	}
 	
+	public void preConnect(){
+		wait(1);
+	}
 	
 	/**
 	 * Authenticates a user by displaying a login window and validating the provided credentials.

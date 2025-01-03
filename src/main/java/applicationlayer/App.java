@@ -55,7 +55,7 @@ public class App {
 	 */
 	public static void main(String[] args) {
 		isRunning.set(true);
-		
+		Helper.getHelper().preConnect();
 		while (isRunning.get()) {
 			MainWindow mainWindow = new MainWindow();
 			

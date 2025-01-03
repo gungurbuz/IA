@@ -6,12 +6,15 @@ import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
 import org.apache.commons.validator.routines.ISBNValidator;
 import com.googlecode.lanterna.TerminalSize;
 
+import java.util.List;
+
 public class ISBNWindow extends BookAddWindow {
 	TextBox ISBNBox;
 	String ISBN;
 	
 	ISBNWindow() {
 		super(25);
+		setHints(List.of(Hint.CENTERED));
 		Panel ISBNPanel = new Panel();
 		Label label = new Label("Enter 10 or 13 digit ISBN without hyphens or spaces");
 		Button exit = new Button("Continue", () -> {

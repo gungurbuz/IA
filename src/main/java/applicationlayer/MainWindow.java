@@ -32,7 +32,7 @@ public class MainWindow extends BasicWindow {
 		super("Library Catalogue System");
 		setHints(List.of(Hint.CENTERED));
 		Panel horizontalPanel = new Panel();
-		horizontalPanel.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
+			horizontalPanel.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
 		Panel leftPanel = new Panel();
 		leftPanel.addComponent(new Button("Login", () -> {
 			Helper.getHelper().login();
