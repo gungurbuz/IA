@@ -15,20 +15,20 @@ This repository contains the code for my Computer Science Internal Assessment, w
 ## Features
 
 - [x] Database Connection
-- [ ] GUI Interface **(IN PROGRESS)**
-- [ ] User Accounts
+- [x] GUI Interface
+- [x] User Accounts
    - [x] Account Authentication
    - [x] Account Switching
    - [x] Password Hashing
    - [ ] Changing User Info/Password
-- [ ] Library Functionality
-   - [ ] Searching
-      - [ ] Partial Searches
+- [x] Library Functionality
+   - [x] Searching
+      - [x] Partial Searches
       - [ ] Autocorrect
-   - [ ] Loaning/Returning
-      - [ ] Loan Status Tracking
+   - [x] Loaning/Returning
+      - [x] Loan Status Tracking
       - [ ] Overdue Reminders
-   - [ ] Stock Operations
+   - [x] Stock Operations
      - [x] Adding Books with:
        - [x] Multiple Languages
        - [x] Multiple Authors
@@ -60,7 +60,7 @@ This repository contains the code for my Computer Science Internal Assessment, w
 2. Navigate to the project directory:
 
     ```sh
-    cd ia
+    cd IA
     ```
 
 3. Compile the project using Maven:
@@ -79,7 +79,7 @@ This repository contains the code for my Computer Science Internal Assessment, w
 
 1. Run the `App` class using the provided Maven command.
 2. You will be presented with a login, signup, or exit option.
-3. After logging in or signing up, you can search for books, add new books, or logout.
+3. After logging in or signing up, you can search for books, add new books, take out loans, return loaned books, or check loan status.
 
 
 ## Contributing
@@ -92,4 +92,4 @@ This repository contains the code for my Computer Science Internal Assessment, w
 
 ## License
 
-This project is licensed under the MIT License. See the LICENSE file for details.
+This project is licensed under the GPL-3.0 License. See the LICENSE file for details.
