@@ -1,10 +1,10 @@
 # IB CS IA
 
-![GitHub License](https://img.shields.io/github/license/gungurbuz/IA)
-![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/gungurbuz/IA)
-<!-- BADGIE TIME -->
-
-<!-- END BADGIE TIME -->
+![GitHub License](https://img.shields.io/github/license/gungurbuz/IA?style=for-the-badge)
+![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/gungurbuz/IA?style=for-the-badge)
+![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/gungurbuz/IA/total?style=for-the-badge)
+![GitHub last commit](https://img.shields.io/github/last-commit/gungurbuz/IA?display_timestamp=author&style=for-the-badge)
+![GitHub Release](https://img.shields.io/github/v/release/gungurbuz/IA?include_prereleases&sort=date&display_name=release&style=for-the-badge)
 
 ## Overview
 
