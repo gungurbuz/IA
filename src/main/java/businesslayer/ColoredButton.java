@@ -7,15 +7,16 @@ import com.googlecode.lanterna.graphics.DelegatingThemeDefinition;
 import com.googlecode.lanterna.graphics.ThemeDefinition;
 import com.googlecode.lanterna.graphics.ThemeStyle;
 import com.googlecode.lanterna.gui2.Button;
+import org.jetbrains.annotations.NotNull;
 
 
 public class ColoredButton extends Button {
 	
-	public ColoredButton(String label,Runnable x , final TextColor.ANSI color) {
+	public ColoredButton(@NotNull String label, @NotNull Runnable x , final TextColor.ANSI color) {
 		super(label, x);
 		setTheme(new DelegatingTheme(getTheme()) {
 			@Override
-			public ThemeDefinition getDefinition(Class<?> clazz) {
+			public @NotNull ThemeDefinition getDefinition(Class<?> clazz) {
 				ThemeDefinition themeDefinition = super.getDefinition(clazz);
 				return new FixedBackgroundButtonThemeStyle(themeDefinition, color);
 			}

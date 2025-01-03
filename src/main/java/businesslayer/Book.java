@@ -1,10 +1,13 @@
 package businesslayer;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 
 public class Book {
 	
-	private String bookid = null;
+	private @Nullable String bookid = null;
 	private String booktitle = "";
 	private ArrayList<String> authorFirstNames = new ArrayList<String>();
 	private ArrayList<String> authorLastNames = new ArrayList<String>();
@@ -21,12 +24,12 @@ public class Book {
 		return location;
 	}
 	
-	public String getBookX(){
-		return String.valueOf(location.getX());
+	public @NotNull String getBookX(){
+		return String.valueOf(location.x());
 	}
 	
-	public String getBookY(){
-		return String.valueOf(location.getY());
+	public @NotNull String getBookY(){
+		return String.valueOf(location.y());
 	}
 	
 	public void setLocation(Coordinate location) {
@@ -138,11 +141,11 @@ public class Book {
 		this.pubYear = pubYear;
 	}
 	
-	public String getBookid() {
+	public @Nullable String getBookid() {
 		return bookid;
 	}
 	
-	public void setBookid(String bookid) {
+	public void setBookid(@Nullable String bookid) {
 		this.bookid = bookid;
 	}
 	

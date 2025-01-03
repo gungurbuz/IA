@@ -12,18 +12,20 @@ import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
 import databaselayer.GUIConnector;
 import databaselayer.Password;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public class SignupWindow extends BasicWindow {
 	
-	WindowBasedTextGUI gui = GUIConnector.getTextGUI();
+	@NotNull WindowBasedTextGUI gui = GUIConnector.getTextGUI();
 	TextBox usernameBox;
 	TextBox firstnameBox;
 	TextBox lastnameBox;
 	TextBox passwordBox;
 	TextBox confirmPasswordBox;
-	Password passwordClass = new Password();
+	@NotNull Password passwordClass = new Password();
 	private boolean isComplete = false;
 	
 	SignupWindow() {
@@ -81,7 +83,7 @@ public class SignupWindow extends BasicWindow {
 		return lastnameBox.getText();
 	}
 	
-	public String getPassword() {
+	public @Nullable String getPassword() {
 		return passwordClass.makePass((passwordBox.getText()));
 	}
 	

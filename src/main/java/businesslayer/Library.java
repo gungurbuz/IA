@@ -9,12 +9,12 @@ import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.dialogs.*;
 import com.googlecode.lanterna.gui2.table.Table;
-import com.googlecode.lanterna.gui2.table.TableModel;
 import databaselayer.DatabaseConnector;
 import databaselayer.GUIConnector;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
 
 public class Library {
 	
@@ -32,6 +32,7 @@ public class Library {
 	private Library() {
 		try {
 			con = DatabaseConnector.getConnection(); // get connection object created in database layer
+			assert con != null;
 			getLastInsertIdStatement = con.prepareStatement("SELECT LAST_INSERT_ID();");
 			libraryLocations.put(1, new Coordinate(1, 1));
 			libraryLocations.put(2, new Coordinate(2, 1));
@@ -64,14 +65,14 @@ public class Library {
 		}
 	}
 	
-	public static Library getLibrary() {
+	public static @NotNull Library getLibrary() {
 		if (library == null) {
 			library = new Library();
 		}
 		return library;
 	}
 	
-	public Coordinate setLocation(int x, int y) {
+	public @NotNull Coordinate setLocation(int x, int y) {
 		return new Coordinate(x, y);
 	}
 	
@@ -141,7 +142,7 @@ public class Library {
 	}
 	*/
 	
-	public ArrayList<Integer> languageSelect(HashMap<Integer, String> langNames) {
+	public @NotNull ArrayList<Integer> languageSelect(@NotNull HashMap<Integer, String> langNames) {
 		ArrayList<Integer> langIds = new ArrayList<>();
 		// Create main window
 		BasicWindow languageWindow = new BasicWindow("Select Languages");
@@ -286,7 +287,7 @@ public class Library {
 	}
 	
 	
-	public int publisherSelect(HashMap<Integer, String> publisherNames) {
+	public int publisherSelect(@NotNull HashMap<Integer, String> publisherNames) {
 		tempPub = 0;
 		try {
 			// Clear previous entries
@@ -454,7 +455,7 @@ public class Library {
 		return 0;
 	}*/
 	
-	public void addBook(Book currentBook) { // to be completed
+	public void addBook(@NotNull Book currentBook) { // to be completed
 		try {
 			PreparedStatement addBookStatement = con.prepareStatement(
 					"INSERT INTO book (pubyear, bookname, isbn, genre, idpublisher, locationx, locationy) VALUES (?, ?, ?, ?, ?, ?, ?);");
@@ -471,8 +472,8 @@ public class Library {
 				addBookStatement.setString(1, currentBook.getPubYear());
 			}
 			addBookStatement.setInt(5, currentBook.getPublisherId());
-			addBookStatement.setInt(6, currentBook.getLocation().getX());
-			addBookStatement.setInt(7, currentBook.getLocation().getY());
+			addBookStatement.setInt(6, currentBook.getLocation().x());
+			addBookStatement.setInt(7, currentBook.getLocation().y());
 			addBookStatement.executeUpdate();
 			int bookId = getLastInsertId();
 			
@@ -505,7 +506,7 @@ public class Library {
 		}
 	}
 	
-	public List<Book> searchBooks(String searchTerm) throws SQLException {
+	public @NotNull List<Book> searchBooks(@Nullable String searchTerm) throws SQLException {
 		List<Book> results = new ArrayList<>();
 		CallableStatement searchstmt = con.prepareCall("CALL SearchBooks(?)");
 		{
@@ -557,7 +558,7 @@ public class Library {
 	 * @param book          The book to add authors to
 	 * @param authorsString Comma-separated list of authors
 	 */
-	private void processAuthors(Book book, String authorsString) {
+	private void processAuthors(@NotNull Book book, @Nullable String authorsString) {
 		if (authorsString == null || authorsString.isEmpty()) {
 			return;
 		}
@@ -586,7 +587,7 @@ public class Library {
 	 * @param conn      Database connection
 	 * @param bookTitle The title of the book
 	 */
-	private void processLanguages(Book book, Connection conn, String bookTitle) {
+	private void processLanguages(@NotNull Book book, @NotNull Connection conn, String bookTitle) {
 		try (PreparedStatement stmt = conn.prepareStatement(
 				"SELECT idlang FROM booklanguages bl " +
 						"JOIN book b ON bl.idbook = b.idbook " +
@@ -614,7 +615,7 @@ public class Library {
 	 * @param publisherName Name of the publisher
 	 * @return Publisher ID
 	 */
-	private int getPublisherId(Connection conn, String publisherName) {
+	private int getPublisherId(@NotNull Connection conn, String publisherName) {
 		try (PreparedStatement stmt = conn.prepareStatement(
 				"SELECT idpublisher FROM publisher WHERE publishername = ?")) {
 			
@@ -637,7 +638,7 @@ public class Library {
 	 * @param book Book with authors
 	 * @return Comma-separated list of author names
 	 */
-	private String combineAuthors(Book book) {
+	private @NotNull String combineAuthors(@NotNull Book book) {
 		List<String> authorFirstNames = book.getAuthorFirstNames();
 		List<String> authorLastNames = book.getAuthorLastNames();
 		
@@ -766,7 +767,7 @@ public class Library {
 		gui.addWindow(resultsWindow);
 	}
 	
-	public static void updateReturnBy(Connection connection, int idloan, int days) throws SQLException {
+	public static void updateReturnBy(@NotNull Connection connection, int idloan, int days) throws SQLException {
 		String sql = "UPDATE loan " +
 				"SET returnbydate = DATE_ADD(returnbydate, INTERVAL ? DAY) " +
 				"WHERE idloan = ? AND returndate IS NULL";
@@ -880,7 +881,7 @@ public class Library {
 	}
 	
 	// Helper method to retrieve active loans for a user
-	private List<Loan> getActiveLoans(int userId) throws SQLException {
+	private @NotNull List<Loan> getActiveLoans(int userId) throws SQLException {
 		List<Loan> loans = new ArrayList<>();
 		String query = "SELECT l.idloan, b.bookname, l.takedate, l.returnbydate " +
 				"FROM loan l " +
@@ -915,7 +916,7 @@ public class Library {
 	}
 	
 	@org.jetbrains.annotations.Nullable
-	public static String isBookOutOnLoan(Connection connection, int bookId) throws SQLException {
+	public static String isBookOutOnLoan(@NotNull Connection connection, int bookId) throws SQLException {
 		// SQL query to check if a book is out on loan
 		String sql = "SELECT m.fname AS first_name, m.sname AS last_name " +
 				"FROM loan l " +
@@ -940,7 +941,7 @@ public class Library {
 		}
 	}
 	
-	public static boolean returnBook(Connection connection, int bookId, int memberId) throws SQLException {
+	public static boolean returnBook(@NotNull Connection connection, int bookId, int memberId) throws SQLException {
 		// SQL query to return a book
 		String sql = "UPDATE loan " +
 				"SET returndate = CURRENT_DATE " +
@@ -964,7 +965,7 @@ public class Library {
 		return getLastInsertIdStatementResultSet.getInt(1);
 	}
 	
-	public static Table<String> getLibraryModel(){
+	public static @NotNull Table<String> getLibraryModel(){
 		Table<String> table = new Table<>(
 				"1",
 				"2",

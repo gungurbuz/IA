@@ -9,6 +9,7 @@ import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.Terminal;
+import org.jetbrains.annotations.NotNull;
 
 
 import java.io.IOException;
@@ -32,7 +33,7 @@ public class GUIConnector {
 	    }
     }
 
-    public static synchronized WindowBasedTextGUI getTextGUI() {
+    public static synchronized @NotNull WindowBasedTextGUI getTextGUI() {
         if (gui == null) {
             gui = createWindowBasedTextGUI();
         }
@@ -40,7 +41,7 @@ public class GUIConnector {
         return gui;
     }
 
-    private static WindowBasedTextGUI createWindowBasedTextGUI() {
+    private static @NotNull WindowBasedTextGUI createWindowBasedTextGUI() {
         WindowBasedTextGUI tempgui;
         try {
 			Terminal terminal = new DefaultTerminalFactory().createTerminal();

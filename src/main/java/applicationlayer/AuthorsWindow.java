@@ -11,14 +11,15 @@ import com.googlecode.lanterna.gui2.TextBox;
 import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
 import databaselayer.GUIConnector;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class AuthorsWindow extends BookAddWindow{
-	WindowBasedTextGUI gui = GUIConnector.getTextGUI();
-	ArrayList<TextBox> authorFirstNameBoxes = new ArrayList<>();
-	ArrayList<TextBox> authorLastNameBoxes = new ArrayList<>();
+	@NotNull WindowBasedTextGUI gui = GUIConnector.getTextGUI();
+	@NotNull ArrayList<TextBox> authorFirstNameBoxes = new ArrayList<>();
+	@NotNull ArrayList<TextBox> authorLastNameBoxes = new ArrayList<>();
 	AuthorsWindow(){
 		super(15);
 		setHints(List.of(Hint.CENTERED));
@@ -44,7 +45,7 @@ public class AuthorsWindow extends BookAddWindow{
 		
 		
 	}
-	private Component addAuthorLine(){
+	private @NotNull Component addAuthorLine(){
 		Panel authorPanel = new Panel();
 		Panel authorFirstNamePanel = new Panel();
 		TextBox authorFirstNameBox = new TextBox(new TerminalSize(40, 1));

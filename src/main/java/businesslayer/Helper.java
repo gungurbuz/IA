@@ -1,24 +1,28 @@
 package businesslayer;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.*;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 
 import applicationlayer.App;
+import com.googlecode.lanterna.gui2.Window;
 import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
+import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
 
+import com.googlecode.lanterna.gui2.dialogs.MessageDialogBuilder;
 import databaselayer.DatabaseConnector;
 import databaselayer.GUIConnector;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class Helper {
 	
 	private static Connection con;
 	private static final WindowBasedTextGUI gui = GUIConnector.getTextGUI();
-	private static Member currentUser;
+	private static @Nullable Member currentUser;
 	private static Helper helper;
 	
 	private Helper() {
@@ -30,7 +34,7 @@ public class Helper {
 		}
 	}
 	
-	public static Helper getHelper() {
+	public static @NotNull Helper getHelper() {
 		if (helper == null) {
 			helper = new Helper();
 		}
@@ -101,6 +105,7 @@ public class Helper {
 			PreparedStatement loginTimeStampStatement = con.prepareStatement(
 					"UPDATE member SET lastlogin = ? WHERE uname = ?");
 			loginTimeStampStatement.setString(1, timeStamp());
+			assert currentUser != null;
 			loginTimeStampStatement.setString(2, currentUser.getUsername());
 			loginTimeStampStatement.executeUpdate();
 		} catch (Exception e) {
@@ -108,7 +113,7 @@ public class Helper {
 		}
 	}
 	
-	public String readLastLogin(String uname) {
+	public @Nullable String readLastLogin(String uname) {
 		String lastLogin = null;
 		try {
 			PreparedStatement loginReadStatement = con.prepareStatement("SELECT lastlogin FROM member WHERE uname = ?;");
@@ -145,6 +150,15 @@ public class Helper {
 				signupStatement.setString(4, passhash);
 				signupStatement.executeUpdate();
 				MessageDialog.showMessageDialog(gui, "Success", "Proceed to login");
+			} catch (SQLIntegrityConstraintViolationException e) {
+				MessageDialog.showMessageDialog(gui, "Duplicate User Error", "A user with that username already exists, proceed to sign in or choose a different username");
+				
+			} catch (SQLException e ){
+				MessageDialog SQLERROR = new MessageDialogBuilder()
+						.setTitle("SQL Error")
+						.setText(Arrays.toString(e.getStackTrace()))
+						.build();
+				gui.setActiveWindow(SQLERROR);
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}
@@ -153,7 +167,7 @@ public class Helper {
 	}
 	
 	
-	public String timeStamp() {
+	public @NotNull String timeStamp() {
 		return ZonedDateTime.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("uuuu.MM.dd.HH.mm.ss"));
 	}
 	

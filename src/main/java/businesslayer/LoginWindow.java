@@ -9,14 +9,16 @@ import com.googlecode.lanterna.gui2.LinearLayout;
 import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.gui2.TextBox;
 import databaselayer.Password;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public class LoginWindow extends BasicWindow {
 	
 	private final Password passwordClass = new Password();
-	private final TextBox usernameBox;
-	private final TextBox passwordBox;
+	private final @NotNull TextBox usernameBox;
+	private final @NotNull TextBox passwordBox;
 	private boolean isComplete = false;
 	
 	public LoginWindow() {
@@ -51,7 +53,7 @@ public class LoginWindow extends BasicWindow {
 		return usernameBox.getText();
 	}
 	
-	public String getPassword() {
+	public @Nullable String getPassword() {
 		return passwordClass.makePass(passwordBox.getText());
 	}
 	

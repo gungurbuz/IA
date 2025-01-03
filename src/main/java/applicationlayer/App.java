@@ -14,6 +14,7 @@ import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialogBuilder;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
+import org.jetbrains.annotations.Nullable;
 
 import static databaselayer.GUIConnector.getTextGUI;
 
@@ -21,12 +22,12 @@ public class App {
 	
 	private static final Scanner s = new Scanner(System.in);
 	
-	private static Member currentUser = null;
+	private static @Nullable Member currentUser = null;
 	private static Book currentBook = new Book();
 	private static final WindowBasedTextGUI gui = getTextGUI();
 	public static final AtomicBoolean isRunning = new AtomicBoolean(false);
 	
-	public static synchronized void setCurrentUser(Member currentUser) {
+	public static synchronized void setCurrentUser(@Nullable Member currentUser) {
 		App.currentUser = currentUser;
 	}
 	
@@ -97,7 +98,6 @@ public class App {
 			currentWindow.close();
 			HashMap<Integer, String> publishers = new HashMap<>();
 			currentBook.setPublisherId(businesslayer.Library.getLibrary().publisherSelect(publishers));
-			languageNames = null;
 			currentWindow = new LocationWindow();
 			gui.addWindowAndWait(currentWindow);
 			

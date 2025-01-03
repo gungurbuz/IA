@@ -2,6 +2,7 @@ package databaselayer;
 
 import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
+import org.jetbrains.annotations.Nullable;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.MessageDigest;
@@ -16,11 +17,11 @@ public class Password {
      * @param plainpass the plain text password to be encrypted
      * @return the encrypted password in hexadecimal format
      */
-    public String makePass(String plainpass) {
+    public @Nullable String makePass(String plainpass) {
         return makePassPrivate(plainpass);
     }
 
-    private String makePassPrivate(String plainpass) {
+    private @Nullable String makePassPrivate(String plainpass) {
         String password;
         String encryptedpassword = null;
         try {
