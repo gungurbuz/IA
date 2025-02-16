@@ -177,27 +177,25 @@ public class Library {
 				}
 				
 				// Add select button
-				languageTable.setSelectAction(() -> {
-					new ActionListDialogBuilder()
-							.setTitle(languageTable.getTableModel().getCell(1, languageTable.getSelectedRow()))
-							.addAction("Confirm Language?", () -> {
-								int selectedRow = languageTable.getSelectedRow();
+				languageTable.setSelectAction(() -> new ActionListDialogBuilder()
+						.setTitle(languageTable.getTableModel().getCell(1, languageTable.getSelectedRow()))
+						.addAction("Confirm Language?", () -> {
+							int selectedRow = languageTable.getSelectedRow();
+							
+							if (selectedRow >= 0) {
+								int languageId = Integer.parseInt(languageTable.getTableModel().getCell(0, selectedRow));
+								langIds.add(languageId);
 								
-								if (selectedRow >= 0) {
-									int languageId = Integer.parseInt(languageTable.getTableModel().getCell(0, selectedRow));
-									langIds.add(languageId);
-									
-								} else {
-									MessageDialog.showMessageDialog(
-											GUIConnector.getTextGUI(),
-											"Error",
-											"Please select a language"
-									);
-								}
-							})
-							.build()
-							.showDialog(gui);
-				});
+							} else {
+								MessageDialog.showMessageDialog(
+										GUIConnector.getTextGUI(),
+										"Error",
+										"Please select a language"
+								);
+							}
+						})
+						.build()
+						.showDialog(gui));
 				
 				// Add new language button
 				Button addNewLanguageButton = new Button("Add New", () -> {
